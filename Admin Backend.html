@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JackpotHub Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {50:'#e6f0ff',100:'#cce0ff',500:'#2563eb',700:'#1e40af'}
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {font-family: Inter, sans-serif; background: #f5f7fa;}
+    .sidebar {background-color: #1e40af;}
+    .sidebar a {color: #fff; transition: all .2s;}
+    .sidebar a:hover, .sidebar a.active {color: #cce0ff; background-color: rgba(255,255,255,0.1);}
+    .card {background-color: #fff; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05);}
+    .btn {transition: all .2s;}
+    .btn:hover {transform: translateY(-2px);}
+    .page { display: none; }
+    .page.active { display: block; }
+  </style>
+</head>
+<body class="flex">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar w-64 min-h-screen p-6 flex flex-col">
+    <div class="text-white text-2xl font-bold mb-8">JackpotHub Admin</div>
+    <nav id="admin-nav" class="flex flex-col gap-2">
+      <a href="#dashboard" class="px-4 py-2 rounded">Dashboard</a>
+      <a href="#users" class="px-4 py-2 rounded">Users</a>
+      <!-- Future sections can be added here -->
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-8 overflow-y-auto">
+    
+    <!-- DASHBOARD -->
+    <section id="dashboard-page" class="page">
+        <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="card">
+                <div class="text-sm text-gray-500">Total Users</div>
+                <div class="text-2xl font-bold" id="total-users">...</div>
+            </div>
+            <div class="card">
+                <div class="text-sm text-gray-500">Total Wallet Balance</div>
+                <div class="text-2xl font-bold" id="total-wallet-balance">...</div>
+            </div>
+        </div>
+        <div class="mt-8 card">
+            <h3 class="font-semibold mb-4">User Registrations (Demo)</h3>
+            <canvas id="revenueChart" height="120"></canvas>
+        </div>
+    </section>
+
+    <!-- USERS MANAGEMENT -->
+    <section id="users-page" class="page">
+      <h1 class="text-3xl font-bold mb-6">Users Management</h1>
+      <div class="card">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b">
+              <th class="p-3 text-sm font-semibold text-gray-600">Name</th>
+              <th class="p-3 text-sm font-semibold text-gray-600">Email</th>
+              <th class="p-3 text-sm font-semibold text-gray-600">Wallet</th>
+              <th class="p-3 text-sm font-semibold text-gray-600">Status</th>
+              <th class="p-3 text-sm font-semibold text-gray-600">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-table" class="text-gray-700">
+            <!-- User rows will be injected here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+  
+<script>
+    const API_URL = '/api';
+
+    async function renderDashboard() {
+        const usersTableBody = document.getElementById('users-table').parentElement.parentElement;
+        if (!usersTableBody) return; // Wait until users table is loaded
+        
+        const users = appState.users;
+        document.getElementById('total-users').innerText = users.length;
+        
+        const totalWallet = users.reduce((sum, user) => sum + user.wallet, 0);
+        document.getElementById('total-wallet-balance').innerText = `₹${totalWallet.toLocaleString()}`;
+    }
+
+    async function renderUsers() {
+      const tbody = document.getElementById('users-table');
+      tbody.innerHTML = '<tr><td colspan="5" class="text-center p-4">Loading users...</td></tr>';
+      try {
+        const response = await fetch(`${API_URL}/admin/users`);
+        const users = await response.json();
+        appState.users = users; // Store for dashboard
+        
+        if (users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center p-4">No users found.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = users.map(u => `
+            <tr class="border-b hover:bg-gray-50">
+                <td class="p-3">${u.name}</td>
+                <td class="p-3">${u.email}</td>
+                <td class="p-3">₹${u.wallet.toLocaleString()}</td>
+                <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${u.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} capitalize">${u.status}</span></td>
+                <td class="p-3">
+                    <button onclick='editWallet("${u._id}", "${u.name}", ${u.wallet})' class='px-2 py-1 bg-brand-500 text-white text-xs rounded btn'>Edit Wallet</button>
+                    <button onclick='toggleBan("${u._id}", "${u.status}")' class='px-2 py-1 ${u.status === "active" ? "bg-red-500" : "bg-green-500"} text-white text-xs rounded btn ml-2'>${u.status === "active" ? "Ban" : "Unban"}</button>
+                </td>
+            </tr>
+        `).join('');
+        
+        await renderDashboard(); // Render dashboard stats after users are loaded
+      } catch(error) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-500">Failed to load users: ${error.message}</td></tr>`;
+      }
+    }
+
+    async function editWallet(userId, name, currentAmount) {
+      const newAmount = prompt(`Enter new wallet amount for ${name}`, currentAmount);
+      if (newAmount !== null && !isNaN(newAmount)) {
+        try {
+            const response = await fetch(`${API_URL}/admin/user/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ wallet: parseInt(newAmount) })
+            });
+            if (!response.ok) throw new Error('Failed to update');
+            alert('Wallet updated successfully');
+            renderUsers();
+        } catch (error) {
+            alert('Error updating wallet: ' + error.message);
+        }
+      }
+    }
+
+    async function toggleBan(userId, currentStatus) {
+        const newStatus = currentStatus === 'active' ? 'banned' : 'active';
+        if (confirm(`Are you sure you want to ${newStatus === 'banned' ? 'ban' : 'unban'} this user?`)) {
+            try {
+                const response = await fetch(`${API_URL}/admin/user/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                if (!response.ok) throw new Error('Failed to update status');
+                alert(`User has been ${newStatus}.`);
+                renderUsers();
+            } catch (error) {
+                 alert('Action failed: ' + error.message);
+            }
+        }
+    }
+
+    function setupNavigation() {
+        const navLinks = document.querySelectorAll('#admin-nav a');
+        const pages = document.querySelectorAll('.page');
+
+        function showPage(hash) {
+            const targetId = (hash || '#dashboard').substring(1) + '-page';
+            pages.forEach(p => p.classList.remove('active'));
+            navLinks.forEach(l => l.classList.remove('active'));
+
+            const activePage = document.getElementById(targetId);
+            const activeLink = document.querySelector(`#admin-nav a[href="${hash || '#dashboard'}"]`);
+
+            if (activePage) activePage.classList.add('active');
+            if (activeLink) activeLink.classList.add('active');
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                window.location.hash = e.target.hash;
+            });
+        });
+
+        window.addEventListener('hashchange', () => showPage(window.location.hash));
+        showPage(window.location.hash);
+    }
+    
+    // Chart.js Demo Chart
+    function renderChart() {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+            datasets: [{label:'New Users',data:[12,19,30,25,35,40],borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.2)', tension:0.4, fill: true}]
+          },
+          options: {responsive:true, plugins:{legend:{display:false}}}
+        });
+    }
+
+    let appState = { users: [] };
+    async function initializeAdmin() {
+        setupNavigation();
+        await renderUsers();
+        renderChart();
+    }
+    initializeAdmin();
+</script>
+</body>
+</html>
