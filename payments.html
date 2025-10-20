@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments - Mines Jackpot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Payment Gateway SDKs -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f8fafc;
+        }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--light);
+            padding-bottom: 100px;
+        }
+        
+        .payment-method { 
+            transition: all 0.2s ease-in-out; 
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        
+        .payment-method:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .payment-method.selected {
+            border-color: var(--secondary);
+            background-color: #f0f9ff;
+        }
+        
+        .input-field { 
+            transition: all 0.3s ease; 
+        }
+        
+        .input-field:focus { 
+            border-color: var(--secondary); 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); 
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-button.active {
+            border-bottom-color: var(--secondary);
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .payment-processing {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md py-4 px-6 sticky top-0 z-40">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <i class="fas fa-bomb text-yellow-500 text-3xl"></i>
+                <span class="text-xl font-bold text-blue-800">Mines Jackpot</span>
+            </a>
+            <div id="nav-container"></div>
+        </div>
+    </nav>
+
+    <!-- Payments Content -->
+    <div class="container mx-auto px-6 py-12">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-800">Payments</h1>
+            <p class="text-gray-500 mt-2">Secure and instant payment processing</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-200 mb-8 overflow-x-auto">
+            <button class="tab-button py-4 px-6 text-lg font-semibold whitespace-nowrap active" data-tab="deposit">
+                <i class="fas fa-plus-circle mr-2"></i>Deposit
+            </button>
+            <button class="tab-button py-4 px-6 text-lg font-semibold whitespace-nowrap" data-tab="withdraw">
+                <i class="fas fa-arrow-circle-down mr-2"></i>Withdraw
+            </button>
+            <button class="tab-button py-4 px-6 text-lg font-semibold whitespace-nowrap" data-tab="history">
+                <i class="fas fa-history mr-2"></i>Transaction History
+            </button>
+        </div>
+
+        <div class="grid lg:grid-cols-5 gap-10">
+            <!-- Main Content -->
+            <div class="lg:col-span-3 space-y-10">
+                <!-- Deposit Section -->
+                <div id="deposit-tab" class="tab-content">
+                    <div class="bg-white rounded-xl shadow-md p-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-plus-circle text-blue-500 mr-3"></i>Deposit Funds
+                        </h2>
+                        
+                        <!-- Quick Amounts -->
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-3 font-semibold">Quick Amounts</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <button type="button" class="quick-amount bg-gray-100 py-3 rounded-lg hover:bg-gray-200 transition font-semibold" data-amount="100">₹100</button>
+                                <button type="button" class="quick-amount bg-gray-100 py-3 rounded-lg hover:bg-gray-200 transition font-semibold" data-amount="500">₹500</button>
+                                <button type="button" class="quick-amount bg-gray-100 py-3 rounded-lg hover:bg-gray-200 transition font-semibold" data-amount="1000">₹1,000</button>
+                                <button type="button" class="quick-amount bg-gray-100 py-3 rounded-lg hover:bg-gray-200 transition font-semibold" data-amount="2000">₹2,000</button>
+                            </div>
+                        </div>
+                        
+                        <form id="deposit-form" class="space-y-6">
+                            <div>
+                                <label for="amount" class="block text-gray-700 mb-2 font-semibold">Amount (₹)</label>
+                                <input type="number" id="amount" name="amount" placeholder="Enter amount" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field"
+                                       min="100" max="50000" required>
+                                <p class="text-sm text-gray-500 mt-1">Min: ₹100 | Max: ₹50,000</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 mb-3 font-semibold">Select Payment Gateway</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="payment-methods">
+                                    <!-- Payment methods populated by JavaScript -->
+                                </div>
+                                <div id="gateway-error" class="text-red-600 text-sm mt-2 hidden">
+                                    Please select a payment gateway
+                                </div>
+                            </div>
+                            
+                            <div id="payment-details" class="hidden">
+                                <!-- Dynamic payment form will be loaded here -->
+                            </div>
+                            
+                            <button type="submit" class="w-full btn-primary text-white py-4 rounded-lg font-semibold text-lg">
+                                Proceed to Payment
+                            </button>
+                        </form>
+
+                        <!-- Payment Processing Modal -->
+                        <div id="payment-processing" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                                <div class="text-center">
+                                    <div class="payment-processing mb-4">
+                                        <i class="fas fa-spinner fa-spin text-4xl text-blue-600"></i>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2" id="processing-title">Processing Payment</h3>
+                                    <p class="text-gray-600 mb-4" id="processing-message">Please wait while we process your payment...</p>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full w-0 transition-all duration-300"></div>
+                                    </div>
+                                    <button type="button" id="cancel-payment" class="mt-4 px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Success Modal -->
+                        <div id="payment-success" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                                <div class="text-center">
+                                    <div class="mb-4 text-green-500">
+                                        <i class="fas fa-check-circle text-6xl"></i>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Payment Successful!</h3>
+                                    <p class="text-gray-600 mb-4" id="success-message">Your payment has been processed successfully.</p>
+                                    <button type="button" id="close-success" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                        Continue
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Failed Modal -->
+                        <div id="payment-failed" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                                <div class="text-center">
+                                    <div class="mb-4 text-red-500">
+                                        <i class="fas fa-times-circle text-6xl"></i>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Payment Failed</h3>
+                                    <p class="text-gray-600 mb-4" id="error-message">Your payment could not be processed. Please try again.</p>
+                                    <button type="button" id="close-error" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                        Try Again
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Withdrawal Section -->
+                <div id="withdraw-tab" class="tab-content hidden">
+                    <div class="bg-white rounded-xl shadow-md p-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-arrow-circle-down text-green-500 mr-3"></i>Withdraw Funds
+                        </h2>
+                        
+                        <!-- Quick Amounts -->
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-3 font-semibold">Quick Amounts</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <button type="button" class="quick-withdraw bg-gray-100 py-3 rounded-lg hover:bg-gray-200 transition font-semibold" data-amount="500">₹500</button>
+                                <button type="button" class="quick-withdraw bg-gray-100 py-3 rounded-lg hover:bg-gray-200 transition font-semibold" data-amount="1000">₹1,000</button>
+                                <button type="button" class="quick-withdraw bg-gray-100 py-3 rounded-lg hover:bg-gray-200 transition font-semibold" data-amount="5000">₹5,000</button>
+                                <button type="button" class="quick-withdraw bg-gray-100 py-3 rounded-lg hover:bg-gray-200 transition font-semibold" data-amount="10000">₹10,000</button>
+                            </div>
+                        </div>
+                        
+                        <form id="withdraw-form" class="space-y-6">
+                            <div>
+                                <label for="withdraw-amount" class="block text-gray-700 mb-2 font-semibold">Amount (₹)</label>
+                                <input type="number" id="withdraw-amount" name="withdraw-amount" placeholder="Enter amount to withdraw" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field"
+                                       min="500" max="50000" required>
+                                <p class="text-sm text-gray-500 mt-1">Min: ₹500 | Max: ₹50,000</p>
+                            </div>
+                            
+                            <div>
+                                <label for="withdraw-method" class="block text-gray-700 mb-2 font-semibold">Withdrawal Method</label>
+                                <select id="withdraw-method" name="withdraw-method" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field bg-white" required>
+                                    <option value="">Select withdrawal method</option>
+                                    <option value="bank">Bank Transfer</option>
+                                    <option value="upi">UPI</option>
+                                    <option value="paytm">Paytm Wallet</option>
+                                </select>
+                            </div>
+                            
+                            <div id="bank-details" class="space-y-4 hidden">
+                                <div>
+                                    <label for="account-number" class="block text-gray-700 mb-2 font-semibold">Bank Account Number</label>
+                                    <input type="text" id="account-number" name="account-number" placeholder="Enter Account Number" 
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field">
+                                </div>
+                                <div>
+                                    <label for="ifsc-code" class="block text-gray-700 mb-2 font-semibold">IFSC Code</label>
+                                    <input type="text" id="ifsc-code" name="ifsc-code" placeholder="Enter bank IFSC code" 
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field">
+                                </div>
+                                <div>
+                                    <label for="account-name" class="block text-gray-700 mb-2 font-semibold">Account Holder Name</label>
+                                    <input type="text" id="account-name" name="account-name" placeholder="Enter account holder name" 
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field">
+                                </div>
+                            </div>
+                            
+                            <div id="upi-details" class="hidden">
+                                <label for="upi-id" class="block text-gray-700 mb-2 font-semibold">UPI ID</label>
+                                <input type="text" id="upi-id" name="upi-id" placeholder="yourname@upi" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field">
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-green-600 text-white py-4 rounded-lg font-semibold hover:bg-green-700 transition text-lg">
+                                Request Withdrawal
+                            </button>
+                        </form>
+                        
+                        <div class="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <div class="flex items-start">
+                                <i class="fas fa-info-circle text-yellow-600 mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-semibold text-yellow-800">Withdrawal Information</h4>
+                                    <p class="text-yellow-700 text-sm mt-1">
+                                        Withdrawals are processed within 24 hours. Minimum withdrawal amount is ₹500. 
+                                        There are no fees for withdrawals.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction History Section -->
+                <div id="history-tab" class="tab-content hidden">
+                    <div class="bg-white rounded-xl shadow-md p-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-history text-purple-500 mr-3"></i>Transaction History
+                        </h2>
+                        
+                        <!-- Filters -->
+                        <div class="flex flex-wrap gap-4 mb-6">
+                            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                                <option>All Transactions</option>
+                                <option>Deposits</option>
+                                <option>Withdrawals</option>
+                                <option>Winnings</option>
+                            </select>
+                            
+                            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                                <option>Last 30 days</option>
+                                <option>Last 7 days</option>
+                                <option>Last 24 hours</option>
+                                <option>Custom Range</option>
+                            </select>
+                            
+                            <button type="button" class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+                                <i class="fas fa-download mr-2"></i>Export
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">2023-11-05</td>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-700">Deposit</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-green-600 font-semibold">+₹1,000.00</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">UPI</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">2023-11-04</td>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-700">Withdrawal</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-red-600 font-semibold">-₹2,000.00</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">Bank Transfer</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">2023-11-03</td>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-700">Game Win</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-green-600 font-semibold">+₹850.00</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">-</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Credited</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">2023-11-02</td>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-700">Withdrawal</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-red-600 font-semibold">-₹5,000.00</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">Bank Transfer</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Processing</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="flex justify-between items-center mt-6">
+                            <div class="text-sm text-gray-700">
+                                Showing <span class="font-semibold">1</span> to <span class="font-semibold">4</span> of <span class="font-semibold">24</span> transactions
+                            </div>
+                            <div class="flex space-x-2">
+                                <button type="button" class="px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">&laquo; Previous</button>
+                                <button type="button" class="px-3 py-2 bg-blue-600 text-white rounded-lg">1</button>
+                                <button type="button" class="px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">2</button>
+                                <button type="button" class="px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">3</button>
+                                <button type="button" class="px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">Next &raquo;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar: Balance & Methods -->
+            <div class="lg:col-span-2">
+                <div class="sticky top-28 space-y-8">
+                    <!-- Available Balance -->
+                    <div class="bg-white p-6 rounded-xl text-center shadow-md border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-500 mb-2">Current Balance</h3>
+                        <p class="text-4xl font-bold text-green-600">₹12,450.00</p>
+                        <p class="text-gray-500 mt-2 text-sm">Last updated: Today</p>
+                        <div class="mt-4 grid grid-cols-2 gap-2">
+                            <div class="text-center p-2 bg-blue-50 rounded-lg">
+                                <p class="text-xs text-gray-600">Total Deposits</p>
+                                <p class="font-semibold">₹8,500</p>
+                            </div>
+                            <div class="text-center p-2 bg-green-50 rounded-lg">
+                                <p class="text-xs text-gray-600">Total Wins</p>
+                                <p class="font-semibold">₹15,200</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Methods -->
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                        <h3 class="text-lg font-semibold mb-4 text-center text-gray-700">Supported Gateways</h3>
+                        <div class="space-y-3">
+                            <div class="payment-method bg-slate-50 p-4 rounded-lg flex items-center border border-slate-200">
+                                <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-shield-alt text-blue-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Razorpay</h4>
+                                    <p class="text-gray-600 text-sm">Cards, UPI, Net Banking</p>
+                                </div>
+                            </div>
+                            <div class="payment-method bg-slate-50 p-4 rounded-lg flex items-center border border-slate-200">
+                                <div class="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fab fa-paytm text-yellow-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Paytm</h4>
+                                    <p class="text-gray-600 text-sm">Wallet & UPI</p>
+                                </div>
+                            </div>
+                            <div class="payment-method bg-slate-50 p-4 rounded-lg flex items-center border border-slate-200">
+                                <div class="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-mobile-alt text-purple-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">PhonePe</h4>
+                                    <p class="text-gray-600 text-sm">UPI & Wallet</p>
+                                </div>
+                            </div>
+                            <div class="payment-method bg-slate-50 p-4 rounded-lg flex items-center border border-slate-200">
+                                <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-university text-green-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Cashfree</h4>
+                                    <p class="text-gray-600 text-sm">All Payment Methods</p>
+                                </div>
+                            </div>
+                            <div class="payment-method bg-slate-50 p-4 rounded-lg flex items-center border border-slate-200">
+                                <div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fab fa-google text-red-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Google Pay</h4>
+                                    <p class="text-gray-600 text-sm">UPI Payments</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Support Card -->
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
+                        <h3 class="text-lg font-semibold mb-2 text-blue-800">Need Help?</h3>
+                        <p class="text-blue-700 mb-4 text-sm">Our support team is available 24/7 to assist with any payment issues.</p>
+                        <div class="space-y-2">
+                            <div class="flex items-center text-blue-700">
+                                <i class="fas fa-comment-dots mr-3"></i>
+                                <span>Live Chat</span>
+                            </div>
+                            <div class="flex items-center text-blue-700">
+                                <i class="fas fa-envelope mr-3"></i>
+                                <span>support@minesjackpot.com</span>
+                            </div>
+                            <div class="flex items-center text-blue-700">
+                                <i class="fas fa-phone mr-3"></i>
+                                <span>+91-9876543210</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Payment gateways configuration
+        const paymentGateways = [
+            {
+                id: 'razorpay',
+                name: 'Razorpay',
+                description: 'Credit/Debit Cards, UPI, Net Banking',
+                icon: 'fas fa-shield-alt',
+                color: 'text-blue-600',
+                bgColor: 'bg-blue-100',
+                supportedMethods: ['cards', 'upi', 'netbanking', 'wallet']
+            },
+            {
+                id: 'paytm',
+                name: 'Paytm',
+                description: 'Paytm Wallet & UPI',
+                icon: 'fab fa-paytm',
+                color: 'text-yellow-600',
+                bgColor: 'bg-yellow-100',
+                supportedMethods: ['wallet', 'upi']
+            },
+            {
+                id: 'phonepe',
+                name: 'PhonePe',
+                description: 'PhonePe UPI & Wallet',
+                icon: 'fas fa-mobile-alt',
+                color: 'text-purple-600',
+                bgColor: 'bg-purple-100',
+                supportedMethods: ['upi', 'wallet']
+            },
+            {
+                id: 'cashfree',
+                name: 'Cashfree',
+                description: 'All Payment Methods',
+                icon: 'fas fa-university',
+                color: 'text-green-600',
+                bgColor: 'bg-green-100',
+                supportedMethods: ['cards', 'upi', 'netbanking', 'wallet']
+            },
+            {
+                id: 'googlepay',
+                name: 'Google Pay',
+                description: 'UPI Payments',
+                icon: 'fab fa-google',
+                color: 'text-red-600',
+                bgColor: 'bg-red-100',
+                supportedMethods: ['upi']
+            }
+        ];
+
+        let selectedGateway = null;
+        let paymentInProgress = false;
+        let progressInterval = null;
+
+        // Initialize payment gateways when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing payment system...');
+            initializePaymentMethods();
+            setupEventListeners();
+            console.log('Payment system initialized successfully');
+        });
+
+        function initializePaymentMethods() {
+            const methodsContainer = document.getElementById('payment-methods');
+            if (!methodsContainer) {
+                console.error('Payment methods container not found');
+                return;
+            }
+
+            methodsContainer.innerHTML = '';
+
+            paymentGateways.forEach(gateway => {
+                const gatewayElement = document.createElement('div');
+                gatewayElement.className = 'payment-method bg-slate-50 p-4 rounded-lg flex items-center border border-slate-200';
+                gatewayElement.innerHTML = `
+                    <div class="${gateway.bgColor} w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                        <i class="${gateway.icon} ${gateway.color} text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold">${gateway.name}</h4>
+                        <p class="text-gray-600 text-sm">${gateway.description}</p>
+                    </div>
+                    <i class="fas fa-check-circle text-green-500 text-xl hidden"></i>
+                `;
+                
+                gatewayElement.addEventListener('click', () => {
+                    console.log('Gateway selected:', gateway.name);
+                    selectGateway(gateway, gatewayElement);
+                });
+                
+                methodsContainer.appendChild(gatewayElement);
+            });
+        }
+
+        function setupEventListeners() {
+            console.log('Setting up event listeners...');
+            
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    console.log('Tab clicked:', tabId);
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show active content
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                        console.log('Hiding content:', content.id);
+                    });
+                    
+                    const activeContent = document.getElementById(`${tabId}-tab`);
+                    if (activeContent) {
+                        activeContent.classList.remove('hidden');
+                        console.log('Showing content:', activeContent.id);
+                    }
+                });
+            });
+
+            // Quick amount buttons
+            document.querySelectorAll('.quick-amount').forEach(button => {
+                button.addEventListener('click', () => {
+                    const amount = button.getAttribute('data-amount');
+                    const amountInput = document.getElementById('amount');
+                    if (amountInput) {
+                        amountInput.value = amount;
+                        console.log('Amount set to:', amount);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.quick-withdraw').forEach(button => {
+                button.addEventListener('click', () => {
+                    const amount = button.getAttribute('data-amount');
+                    const withdrawInput = document.getElementById('withdraw-amount');
+                    if (withdrawInput) {
+                        withdrawInput.value = amount;
+                    }
+                });
+            });
+
+            // Withdrawal method change
+            const withdrawMethod = document.getElementById('withdraw-method');
+            if (withdrawMethod) {
+                withdrawMethod.addEventListener('change', function() {
+                    const method = this.value;
+                    const bankDetails = document.getElementById('bank-details');
+                    const upiDetails = document.getElementById('upi-details');
+                    
+                    if (bankDetails) bankDetails.classList.add('hidden');
+                    if (upiDetails) upiDetails.classList.add('hidden');
+                    
+                    if (method === 'bank' && bankDetails) {
+                        bankDetails.classList.remove('hidden');
+                    } else if (method === 'upi' && upiDetails) {
+                        upiDetails.classList.remove('hidden');
+                    }
+                });
+            }
+
+            // Form submissions
+            const depositForm = document.getElementById('deposit-form');
+            if (depositForm) {
+                depositForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Deposit form submitted');
+                    
+                    if (paymentInProgress) {
+                        console.log('Payment already in progress');
+                        return;
+                    }
+                    
+                    const amount = document.getElementById('amount')?.value;
+                    if (!amount || amount < 100 || amount > 50000) {
+                        showError('Please enter a valid amount between ₹100 and ₹50,000');
+                        return;
+                    }
+                    
+                    if (!selectedGateway) {
+                        showGatewayError();
+                        return;
+                    }
+                    
+                    console.log('Processing payment with gateway:', selectedGateway.name, 'Amount:', amount);
+                    processPayment(selectedGateway.id, amount);
+                });
+            }
+
+            const withdrawForm = document.getElementById('withdraw-form');
+            if (withdrawForm) {
+                withdrawForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const amount = document.getElementById('withdraw-amount')?.value;
+                    if (amount) {
+                        alert(`Withdrawal request for ₹${amount} submitted successfully!`);
+                        this.reset();
+                    }
+                });
+            }
+
+            // Cancel payment button
+            const cancelPayment = document.getElementById('cancel-payment');
+            if (cancelPayment) {
+                cancelPayment.addEventListener('click', function() {
+                    console.log('Payment cancelled by user');
+                    hidePaymentProcessing();
+                    paymentInProgress = false;
+                    if (progressInterval) {
+                        clearInterval(progressInterval);
+                        progressInterval = null;
+                    }
+                });
+            }
+
+            // Success modal close
+            const closeSuccess = document.getElementById('close-success');
+            if (closeSuccess) {
+                closeSuccess.addEventListener('click', function() {
+                    hidePaymentSuccess();
+                    resetPaymentForm();
+                });
+            }
+
+            // Error modal close
+            const closeError = document.getElementById('close-error');
+            if (closeError) {
+                closeError.addEventListener('click', function() {
+                    hidePaymentError();
+                });
+            }
+
+            console.log('Event listeners setup completed');
+        }
+
+        function selectGateway(gateway, element) {
+            // Remove selection from all gateways
+            document.querySelectorAll('.payment-method').forEach(m => {
+                m.classList.remove('selected');
+                const checkIcon = m.querySelector('.fa-check-circle');
+                if (checkIcon) {
+                    checkIcon.classList.add('hidden');
+                }
+            });
+            
+            // Select current gateway
+            element.classList.add('selected');
+            const checkIcon = element.querySelector('.fa-check-circle');
+            if (checkIcon) {
+                checkIcon.classList.remove('hidden');
+            }
+            
+            selectedGateway = gateway;
+            hideGatewayError();
+            
+            // Show payment details
+            showGatewayDetails(gateway);
+            
+            console.log('Gateway selected successfully:', gateway.name);
+        }
+
+        function showGatewayError() {
+            const errorElement = document.getElementById('gateway-error');
+            if (errorElement) {
+                errorElement.classList.remove('hidden');
+            }
+        }
+
+        function hideGatewayError() {
+            const errorElement = document.getElementById('gateway-error');
+            if (errorElement) {
+                errorElement.classList.add('hidden');
+            }
+        }
+
+        function showGatewayDetails(gateway) {
+            const detailsContainer = document.getElementById('payment-details');
+            if (!detailsContainer) return;
+            
+            detailsContainer.classList.remove('hidden');
+            
+            let detailsHTML = '';
+            
+            switch(gateway.id) {
+                case 'razorpay':
+                    detailsHTML = `
+                        <div class="space-y-4">
+                            <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <p class="text-sm text-blue-700">
+                                    <i class="fas fa-shield-alt mr-2"></i>
+                                    You will be redirected to Razorpay's secure payment page.
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'paytm':
+                    detailsHTML = `
+                        <div class="space-y-4">
+                            <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                                <p class="text-sm text-yellow-700">
+                                    <i class="fab fa-paytm mr-2"></i>
+                                    Redirecting to PayTM for secure payment processing.
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'phonepe':
+                    detailsHTML = `
+                        <div class="space-y-4">
+                            <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                                <p class="text-sm text-purple-700">
+                                    <i class="fas fa-mobile-alt mr-2"></i>
+                                    You will be redirected to PhonePe for payment.
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'cashfree':
+                    detailsHTML = `
+                        <div class="space-y-4">
+                            <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                                <p class="text-sm text-green-700">
+                                    <i class="fas fa-university mr-2"></i>
+                                    Cashfree secure payment gateway.
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                default:
+                    detailsHTML = `
+                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <p class="text-sm text-blue-700">
+                                Secure payment processing through ${gateway.name}.
+                            </p>
+                        </div>
+                    `;
+            }
+            
+            detailsContainer.innerHTML = detailsHTML;
+        }
+
+        // Payment processing functions
+        function processPayment(gateway, amount) {
+            if (paymentInProgress) return;
+            
+            paymentInProgress = true;
+            showPaymentProcessing(`Processing ${selectedGateway.name} Payment`, 'Initializing payment gateway...');
+
+            // Simulate API call delay
+            setTimeout(() => {
+                switch(gateway) {
+                    case 'razorpay':
+                        processRazorpayPayment(amount);
+                        break;
+                    case 'paytm':
+                        processPaytmPayment(amount);
+                        break;
+                    case 'phonepe':
+                        processPhonePePayment(amount);
+                        break;
+                    case 'cashfree':
+                        processCashfreePayment(amount);
+                        break;
+                    case 'googlepay':
+                        processGooglePayPayment(amount);
+                        break;
+                    default:
+                        processGenericPayment(amount);
+                }
+            }, 1000);
+        }
+
+        function showPaymentProcessing(title, message) {
+            const processingTitle = document.getElementById('processing-title');
+            const processingMessage = document.getElementById('processing-message');
+            const processingModal = document.getElementById('payment-processing');
+            
+            if (processingTitle) processingTitle.textContent = title;
+            if (processingMessage) processingMessage.textContent = message;
+            if (processingModal) processingModal.classList.remove('hidden');
+            
+            // Reset progress bar
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                progressBar.style.width = '0%';
+            }
+            
+            // Simulate progress bar
+            let progress = 0;
+            progressInterval = setInterval(() => {
+                if (!paymentInProgress) {
+                    clearInterval(progressInterval);
+                    return;
+                }
+                progress += 2;
+                if (progressBar) {
+                    progressBar.style.width = `${Math.min(progress, 90)}%`;
+                }
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 100);
+        }
+
+        function hidePaymentProcessing() {
+            const processingModal = document.getElementById('payment-processing');
+            if (processingModal) {
+                processingModal.classList.add('hidden');
+            }
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        function showPaymentSuccess(message) {
+            const successMessage = document.getElementById('success-message');
+            const successModal = document.getElementById('payment-success');
+            
+            if (successMessage) successMessage.textContent = message;
+            if (successModal) successModal.classList.remove('hidden');
+        }
+
+        function hidePaymentSuccess() {
+            const successModal = document.getElementById('payment-success');
+            if (successModal) {
+                successModal.classList.add('hidden');
+            }
+        }
+
+        function showPaymentError(message) {
+            const errorMessage = document.getElementById('error-message');
+            const errorModal = document.getElementById('payment-failed');
+            
+            if (errorMessage) errorMessage.textContent = message;
+            if (errorModal) errorModal.classList.remove('hidden');
+        }
+
+        function hidePaymentError() {
+            const errorModal = document.getElementById('payment-failed');
+            if (errorModal) {
+                errorModal.classList.add('hidden');
+            }
+        }
+
+        function showError(message) {
+            alert('Error: ' + message);
+        }
+
+        function completePayment(success, message) {
+            paymentInProgress = false;
+            hidePaymentProcessing();
+            
+            if (success) {
+                showPaymentSuccess(message);
+            } else {
+                showPaymentError(message);
+            }
+        }
+
+        function resetPaymentForm() {
+            const depositForm = document.getElementById('deposit-form');
+            const paymentDetails = document.getElementById('payment-details');
+            
+            if (depositForm) depositForm.reset();
+            if (paymentDetails) paymentDetails.classList.add('hidden');
+            
+            document.querySelectorAll('.payment-method').forEach(m => {
+                m.classList.remove('selected');
+                const checkIcon = m.querySelector('.fa-check-circle');
+                if (checkIcon) {
+                    checkIcon.classList.add('hidden');
+                }
+            });
+            
+            selectedGateway = null;
+        }
+
+        // Individual Gateway Implementations
+        function processRazorpayPayment(amount) {
+            const processingMessage = document.getElementById('processing-message');
+            if (processingMessage) {
+                processingMessage.textContent = 'Opening Razorpay checkout...';
+            }
+            
+            // For demo purposes - in production, you would use actual Razorpay keys
+            const options = {
+                "key": "rzp_test_RVCi1rwWaxlsAc", // Replace with actual key
+                "amount": amount * 100,
+                "currency": "INR",
+                "name": "Mines Jackpot",
+                "description": "Game Deposit",
+                "image": "https://picsum.photos/seed/admin/40/40.jpg",
+                "handler": function (response) {
+                    completePayment(true, `Payment successful! Payment ID: ${response.razorpay_payment_id}`);
+                },
+                "prefill": {
+                    "name": "Player Name",
+                    "email": "player@example.com",
+                    "contact": "9999999999"
+                },
+                "notes": {
+                    "address": "Game Deposit"
+                },
+                "theme": {
+                    "color": "#3B82F6"
+                }
+            };
+            
+            try {
+                const rzp = new Razorpay(options);
+                rzp.open();
+                
+                rzp.on('payment.failed', function (response) {
+                    completePayment(false, `Payment failed: ${response.error.description}`);
+                });
+            } catch (error) {
+                console.error('Razorpay error:', error);
+                completePayment(false, 'Payment gateway error. Please try another method.');
+            }
+        }
+
+        function processPaytmPayment(amount) {
+            const processingMessage = document.getElementById('processing-message');
+            if (processingMessage) {
+                processingMessage.textContent = 'Redirecting to PayTM...';
+            }
+            
+            // Simulate PayTM payment
+            setTimeout(() => {
+                const success = Math.random() > 0.1; // 90% success rate
+                if (success) {
+                    completePayment(true, `PayTM payment of ₹${amount} processed successfully!`);
+                } else {
+                    completePayment(false, 'PayTM payment failed. Please try again.');
+                }
+            }, 3000);
+        }
+
+        function processPhonePePayment(amount) {
+            const processingMessage = document.getElementById('processing-message');
+            if (processingMessage) {
+                processingMessage.textContent = 'Opening PhonePe...';
+            }
+            
+            // Simulate PhonePe payment
+            setTimeout(() => {
+                const success = Math.random() > 0.1;
+                if (success) {
+                    completePayment(true, `PhonePe payment of ₹${amount} completed!`);
+                } else {
+                    completePayment(false, 'PhonePe payment failed.');
+                }
+            }, 2500);
+        }
+
+        function processCashfreePayment(amount) {
+            const processingMessage = document.getElementById('processing-message');
+            if (processingMessage) {
+                processingMessage.textContent = 'Processing with Cashfree...';
+            }
+            
+            // Simulate Cashfree payment
+            setTimeout(() => {
+                const success = Math.random() > 0.05; // 95% success rate
+                if (success) {
+                    completePayment(true, `Cashfree payment of ₹${amount} successful!`);
+                } else {
+                    completePayment(false, 'Cashfree payment failed.');
+                }
+            }, 2000);
+        }
+
+        function processGooglePayPayment(amount) {
+            const processingMessage = document.getElementById('processing-message');
+            if (processingMessage) {
+                processingMessage.textContent = 'Opening Google Pay...';
+            }
+            
+            // Simulate Google Pay payment
+            setTimeout(() => {
+                const success = Math.random() > 0.1;
+                if (success) {
+                    completePayment(true, `Google Pay payment of ₹${amount} completed!`);
+                } else {
+                    completePayment(false, 'Google Pay payment cancelled.');
+                }
+            }, 2200);
+        }
+
+        function processGenericPayment(amount) {
+            const processingMessage = document.getElementById('processing-message');
+            if (processingMessage) {
+                processingMessage.textContent = 'Processing payment...';
+            }
+            
+            setTimeout(() => {
+                const success = Math.random() > 0.2;
+                if (success) {
+                    completePayment(true, `Payment of ₹${amount} processed successfully!`);
+                } else {
+                    completePayment(false, 'Payment processing failed. Please try again.');
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

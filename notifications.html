@@ -1,0 +1,243 @@
+<div class="fixed top-4 right-4 sm:top-6 sm:right-6 bg-white rounded-xl shadow-2xl w-80 sm:w-96 overflow-hidden z-50 border border-gray-200">
+  <!-- Notifications Header -->
+  <div class="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-4 flex justify-between items-center">
+    <div class="flex items-center">
+      <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
+        <i class="fas fa-bell"></i>
+      </div>
+      <div>
+        <h3 class="font-semibold">Notifications</h3>
+        <p class="text-purple-100 text-xs">You have 3 unread</p>
+      </div>
+    </div>
+    <button class="text-white hover:text-purple-200 transition" id="close-notifications">
+      <i class="fas fa-times text-lg"></i>
+    </button>
+  </div>
+  
+  <!-- Notifications Tabs -->
+  <div class="flex border-b border-gray-200 bg-gray-50">
+    <button class="flex-1 py-3 text-sm font-semibold text-purple-600 border-b-2 border-purple-600">All</button>
+    <button class="flex-1 py-3 text-sm font-semibold text-gray-500 hover:text-gray-700">Unread</button>
+    <button class="flex-1 py-3 text-sm font-semibold text-gray-500 hover:text-gray-700">Archived</button>
+  </div>
+  
+  <!-- Notifications List -->
+  <div class="max-h-96 overflow-y-auto">
+    <!-- Unread Notifications -->
+    <div class="p-3 bg-blue-50 border-b border-blue-100">
+      <p class="text-xs font-semibold text-blue-800">UNREAD • 3 NEW</p>
+    </div>
+    
+    <!-- Notification Items -->
+    <div class="divide-y divide-gray-100">
+      <!-- Notification 1 -->
+      <div class="p-4 hover:bg-gray-50 cursor-pointer notification-item bg-blue-50" data-id="1">
+        <div class="flex items-start">
+          <div class="w-10 h-10 bg-green-100 rounded-full flex-shrink-0 flex items-center justify-center mr-3">
+            <i class="fas fa-trophy text-green-500"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start mb-1">
+              <p class="font-semibold text-gray-800">You won ₹500!</p>
+              <span class="bg-green-500 w-2 h-2 rounded-full flex-shrink-0 mt-2"></span>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Congratulations on your recent win in the Mines game. Your winnings have been credited to your account.</p>
+            <div class="flex justify-between items-center">
+              <p class="text-xs text-gray-400">2 hours ago</p>
+              <div class="flex space-x-2">
+                <button class="text-blue-600 hover:text-blue-800 text-xs font-semibold mark-read">
+                  Mark read
+                </button>
+                <button class="text-gray-500 hover:text-gray-700 text-xs">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Notification 2 -->
+      <div class="p-4 hover:bg-gray-50 cursor-pointer notification-item" data-id="2">
+        <div class="flex items-start">
+          <div class="w-10 h-10 bg-blue-100 rounded-full flex-shrink-0 flex items-center justify-center mr-3">
+            <i class="fas fa-gift text-blue-500"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start mb-1">
+              <p class="font-semibold text-gray-800">New Bonus Available</p>
+              <span class="bg-blue-500 w-2 h-2 rounded-full flex-shrink-0 mt-2"></span>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Claim your 50% weekend bonus now! Limited time offer valid until Sunday.</p>
+            <div class="flex justify-between items-center">
+              <p class="text-xs text-gray-400">1 day ago</p>
+              <div class="flex space-x-2">
+                <button class="text-blue-600 hover:text-blue-800 text-xs font-semibold mark-read">
+                  Mark read
+                </button>
+                <button class="text-gray-500 hover:text-gray-700 text-xs">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Notification 3 -->
+      <div class="p-4 hover:bg-gray-50 cursor-pointer notification-item" data-id="3">
+        <div class="flex items-start">
+          <div class="w-10 h-10 bg-yellow-100 rounded-full flex-shrink-0 flex items-center justify-center mr-3">
+            <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start mb-1">
+              <p class="font-semibold text-gray-800">Account Verification</p>
+              <span class="bg-yellow-500 w-2 h-2 rounded-full flex-shrink-0 mt-2"></span>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Please verify your email address to secure your account and enable withdrawals.</p>
+            <div class="flex justify-between items-center">
+              <p class="text-xs text-gray-400">3 days ago</p>
+              <div class="flex space-x-2">
+                <button class="text-blue-600 hover:text-blue-800 text-xs font-semibold mark-read">
+                  Mark read
+                </button>
+                <button class="text-gray-500 hover:text-gray-700 text-xs">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Read Notifications -->
+      <div class="p-3 bg-gray-50 border-b border-gray-100">
+        <p class="text-xs font-semibold text-gray-600">READ • OLDER</p>
+      </div>
+      
+      <!-- Notification 4 -->
+      <div class="p-4 hover:bg-gray-50 cursor-pointer notification-item read" data-id="4">
+        <div class="flex items-start">
+          <div class="w-10 h-10 bg-purple-100 rounded-full flex-shrink-0 flex items-center justify-center mr-3">
+            <i class="fas fa-user-plus text-purple-500"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start mb-1">
+              <p class="font-semibold text-gray-800">Friend Joined!</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Your friend Alex joined using your referral code. You earned ₹500!</p>
+            <div class="flex justify-between items-center">
+              <p class="text-xs text-gray-400">1 week ago</p>
+              <button class="text-gray-500 hover:text-gray-700 text-xs">
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Notification 5 -->
+      <div class="p-4 hover:bg-gray-50 cursor-pointer notification-item read" data-id="5">
+        <div class="flex items-start">
+          <div class="w-10 h-10 bg-indigo-100 rounded-full flex-shrink-0 flex items-center justify-center mr-3">
+            <i class="fas fa-star text-indigo-500"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start mb-1">
+              <p class="font-semibold text-gray-800">Level Up!</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Congratulations! You've reached Level 5. New rewards unlocked.</p>
+            <div class="flex justify-between items-center">
+              <p class="text-xs text-gray-400">2 weeks ago</p>
+              <button class="text-gray-500 hover:text-gray-700 text-xs">
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Notifications Footer -->
+  <div class="p-3 bg-gray-50 border-t border-gray-200 flex justify-between">
+    <button class="text-blue-600 hover:text-blue-800 text-sm font-semibold" id="mark-all-read">
+      <i class="fas fa-check-double mr-1"></i>Mark all as read
+    </button>
+    <button class="text-gray-600 hover:text-gray-800 text-sm">
+      <i class="fas fa-cog mr-1"></i>Settings
+    </button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const closeButton = document.getElementById('close-notifications');
+    const markAllReadButton = document.getElementById('mark-all-read');
+    const notificationItems = document.querySelectorAll('.notification-item');
+    
+    // Close notifications
+    closeButton.addEventListener('click', function() {
+      this.closest('.fixed').style.display = 'none';
+    });
+    
+    // Mark individual notification as read
+    notificationItems.forEach(item => {
+      const markReadButton = item.querySelector('.mark-read');
+      if (markReadButton) {
+        markReadButton.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const notification = this.closest('.notification-item');
+          notification.classList.add('read');
+          notification.classList.remove('bg-blue-50');
+          notification.querySelector('.bg-blue-500, .bg-green-500, .bg-yellow-500')?.remove();
+          this.remove();
+          
+          updateUnreadCount();
+        });
+      }
+      
+      // Notification click action
+      item.addEventListener('click', function() {
+        const notificationId = this.getAttribute('data-id');
+        // In a real app, this would navigate to the relevant page
+        console.log('Notification clicked:', notificationId);
+      });
+    });
+    
+    // Mark all as read
+    markAllReadButton.addEventListener('click', function() {
+      notificationItems.forEach(item => {
+        item.classList.add('read');
+        item.classList.remove('bg-blue-50');
+        const dot = item.querySelector('.bg-blue-500, .bg-green-500, .bg-yellow-500');
+        if (dot) dot.remove();
+        const markReadBtn = item.querySelector('.mark-read');
+        if (markReadBtn) markReadBtn.remove();
+      });
+      
+      updateUnreadCount();
+      
+      // Show confirmation
+      const confirmation = document.createElement('div');
+      confirmation.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 p-3 rounded-lg shadow-lg bg-green-100 text-green-800 font-semibold text-sm';
+      confirmation.innerHTML = '<i class="fas fa-check-circle mr-2"></i>All notifications marked as read';
+      document.body.appendChild(confirmation);
+      
+      setTimeout(() => {
+        document.body.removeChild(confirmation);
+      }, 2000);
+    });
+    
+    // Update unread count
+    function updateUnreadCount() {
+      const unreadCount = document.querySelectorAll('.notification-item:not(.read) .bg-blue-500, .notification-item:not(.read) .bg-green-500, .notification-item:not(.read) .bg-yellow-500').length;
+      const countElement = document.querySelector('.text-purple-100');
+      if (countElement) {
+        countElement.textContent = `You have ${unreadCount} unread`;
+      }
+    }
+  });
+</script>

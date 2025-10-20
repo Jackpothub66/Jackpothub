@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bonus Details - Mines Jackpot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f8fafc;
+        }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--light);
+        }
+        
+        .bonus-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #e5e7eb;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.5s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .countdown-timer {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md py-4 px-6 sticky top-0 z-40">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <i class="fas fa-bomb text-yellow-500 text-3xl"></i>
+                <span class="text-xl font-bold text-blue-800">Mines Jackpot</span>
+            </a>
+            <!-- Dynamic Nav Container (for Desktop) -->
+            <div id="nav-container"></div>
+        </div>
+    </nav>
+
+    <!-- Bonus Details Content -->
+    <div class="container mx-auto px-6 py-8">
+        <!-- Bonus Header -->
+        <div class="bonus-header text-white rounded-2xl p-8 mb-8 shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 right-0 opacity-20">
+                <i class="fas fa-gift text-6xl m-6"></i>
+            </div>
+            <div class="relative z-10">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+                    <div class="mb-6 lg:mb-0">
+                        <div class="flex items-center mb-4">
+                            <h1 class="text-4xl font-bold mr-4">Weekly Weekend Special</h1>
+                            <span class="bg-yellow-500 text-yellow-900 px-3 py-1 rounded-full text-sm font-semibold">
+                                <i class="fas fa-bolt mr-1"></i>Limited Time Offer
+                            </span>
+                        </div>
+                        <p class="text-blue-100 text-lg">Get a 50% bonus on your deposits every weekend!</p>
+                    </div>
+                    <div class="text-center lg:text-right">
+                        <div class="text-3xl font-bold mb-2">50% BONUS</div>
+                        <div class="text-blue-200">Up to ₹5,000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Bonus Progress -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Your Bonus Progress</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                <span>Deposit Progress</span>
+                                <span>₹2,500 / ₹5,000</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 50%"></div>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">Deposit ₹2,500 more to get maximum bonus</p>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                <span>Wagering Progress</span>
+                                <span>15x / 30x</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 50%"></div>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">Complete wagering to withdraw bonus funds</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Offer Description -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-info-circle text-blue-500 mr-3"></i>Offer Details
+                    </h2>
+                    
+                    <div class="prose max-w-none">
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            Make this weekend extra special with our exclusive 50% deposit bonus. Every deposit you make from Friday to Sunday will be boosted by 50%, giving you more funds to play your favorite games. Don't miss this chance to maximize your winnings!
+                        </p>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                            <div class="feature-card bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                <div class="flex items-center mb-3">
+                                    <i class="fas fa-calendar-alt text-blue-600 text-xl mr-3"></i>
+                                    <h3 class="font-semibold text-gray-800">Weekend Availability</h3>
+                                </div>
+                                <p class="text-gray-700 text-sm">Available every Friday 00:01 to Sunday 23:59</p>
+                            </div>
+                            
+                            <div class="feature-card bg-green-50 p-4 rounded-lg border border-green-200">
+                                <div class="flex items-center mb-3">
+                                    <i class="fas fa-percentage text-green-600 text-xl mr-3"></i>
+                                    <h3 class="font-semibold text-gray-800">50% Bonus Rate</h3>
+                                </div>
+                                <p class="text-gray-700 text-sm">Get 50% extra on every qualifying deposit</p>
+                            </div>
+                            
+                            <div class="feature-card bg-purple-50 p-4 rounded-lg border border-purple-200">
+                                <div class="flex items-center mb-3">
+                                    <i class="fas fa-coins text-purple-600 text-xl mr-3"></i>
+                                    <h3 class="font-semibold text-gray-800">₹5,000 Max Bonus</h3>
+                                </div>
+                                <p class="text-gray-700 text-sm">Maximum bonus amount per deposit</p>
+                            </div>
+                            
+                            <div class="feature-card bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                <div class="flex items-center mb-3">
+                                    <i class="fas fa-gamepad text-yellow-600 text-xl mr-3"></i>
+                                    <h3 class="font-semibold text-gray-800">All Games Eligible</h3>
+                                </div>
+                                <p class="text-gray-700 text-sm">Use bonus funds on all Mines games</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How to Claim -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-play-circle text-green-500 mr-3"></i>How to Claim This Bonus
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 mr-4">
+                                <span class="font-bold">1</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800 mb-2">Make a Deposit</h3>
+                                <p class="text-gray-600">Deposit at least ₹500 during the weekend period</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 mr-4">
+                                <span class="font-bold">2</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800 mb-2">Bonus Automatically Applied</h3>
+                                <p class="text-gray-600">Your 50% bonus will be credited instantly to your account</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 mr-4">
+                                <span class="font-bold">3</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800 mb-2">Play and Win</h3>
+                                <p class="text-gray-600">Use your bonus funds to play your favorite Mines games</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 mr-4">
+                                <span class="font-bold">4</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800 mb-2">Meet Wagering Requirements</h3>
+                                <p class="text-gray-600">Complete 30x wagering to withdraw your winnings</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-file-contract text-gray-600 mr-3"></i>Terms & Conditions
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start p-4 bg-gray-50 rounded-lg">
+                            <i class="fas fa-clock text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Validity Period</h4>
+                                <p class="text-gray-600 text-sm">The offer is valid every week from Friday (00:01 AM) to Sunday (11:59 PM).</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start p-4 bg-gray-50 rounded-lg">
+                            <i class="fas fa-rupee-sign text-green-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Minimum Deposit</h4>
+                                <p class="text-gray-600 text-sm">A minimum deposit of ₹500 is required to be eligible for this bonus.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start p-4 bg-gray-50 rounded-lg">
+                            <i class="fas fa-chart-line text-purple-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Maximum Bonus</h4>
+                                <p class="text-gray-600 text-sm">The maximum bonus amount that can be claimed is ₹5,000 per deposit.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start p-4 bg-gray-50 rounded-lg">
+                            <i class="fas fa-sync-alt text-yellow-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Wagering Requirements</h4>
+                                <p class="text-gray-600 text-sm">The bonus amount is subject to a 30x wagering requirement before it can be withdrawn.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start p-4 bg-gray-50 rounded-lg">
+                            <i class="fas fa-gamepad text-red-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Game Eligibility</h4>
+                                <p class="text-gray-600 text-sm">This bonus can be used on all Mines games available on the platform.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start p-4 bg-gray-50 rounded-lg">
+                            <i class="fas fa-exclamation-triangle text-orange-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Platform Rights</h4>
+                                <p class="text-gray-600 text-sm">Mines Jackpot reserves the right to modify or cancel this promotion at any time.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Claim Bonus Card -->
+                <div class="bg-white rounded-xl shadow-md p-6 sticky top-28">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Claim Your Bonus</h3>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600 mb-1">50%</div>
+                            <div class="text-sm text-blue-700">Bonus Rate</div>
+                        </div>
+                        
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600 mb-1">₹5,000</div>
+                            <div class="text-sm text-green-700">Maximum Bonus</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Countdown Timer -->
+                    <div class="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <h4 class="font-semibold text-yellow-800 text-sm mb-2 text-center">Offer Ends In</h4>
+                        <div class="countdown-timer text-center text-2xl text-yellow-700" id="countdown">
+                            02:15:33:45
+                        </div>
+                    </div>
+                    
+                    <a href="payments.html" class="block w-full btn-primary text-white py-4 rounded-lg font-semibold text-lg text-center mb-4">
+                        <i class="fas fa-gift mr-2"></i>Claim Offer Now
+                    </a>
+                    
+                    <p class="text-center text-sm text-gray-500">
+                        <i class="fas fa-users mr-1"></i> 248 people claimed today
+                    </p>
+                </div>
+
+                <!-- Related Bonuses -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Related Offers</h3>
+                    
+                    <div class="space-y-4">
+                        <a href="#" class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                            <div class="flex items-center mb-2">
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-semibold mr-2">NEW</span>
+                                <h4 class="font-semibold text-gray-800">Welcome Bonus</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm">100% bonus up to ₹1,000 on first deposit</p>
+                        </a>
+                        
+                        <a href="#" class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                            <div class="flex items-center mb-2">
+                                <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-semibold mr-2">VIP</span>
+                                <h4 class="font-semibold text-gray-800">VIP Cashback</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm">Up to 15% weekly cashback for VIP members</p>
+                        </a>
+                        
+                        <a href="#" class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                            <div class="flex items-center mb-2">
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold mr-2">DAILY</span>
+                                <h4 class="font-semibold text-gray-800">Daily Rewards</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm">Login daily to claim free coins and bonuses</p>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Support Card -->
+                <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
+                    <h3 class="text-lg font-semibold mb-2 text-blue-800">Need Help?</h3>
+                    <p class="text-blue-700 mb-4 text-sm">Our support team is here to help with any bonus-related questions.</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-blue-700">
+                            <i class="fas fa-comment-dots mr-3"></i>
+                            <span>Live Chat</span>
+                        </div>
+                        <div class="flex items-center text-blue-700">
+                            <i class="fas fa-envelope mr-3"></i>
+                            <span>support@minesjackpot.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation Container -->
+    <div id="bottom-nav-container" class="md:hidden"></div>
+
+    <script>
+        // Countdown timer
+        function updateCountdown() {
+            // Set target date (next Sunday 23:59)
+            const now = new Date();
+            const target = new Date();
+            
+            // Get next Sunday
+            target.setDate(now.getDate() + (7 - now.getDay()));
+            target.setHours(23, 59, 59, 999);
+            
+            const diff = target - now;
+            
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                document.getElementById('countdown').textContent = 
+                    `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            } else {
+                document.getElementById('countdown').textContent = '00:00:00:00';
+            }
+        }
+
+        // Update countdown every second
+        setInterval(updateCountdown, 1000);
+        updateCountdown(); // Initial call
+
+        // Claim bonus button
+        document.querySelector('a[href="payments.html"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show confirmation message
+            const confirmation = document.createElement('div');
+            confirmation.className = 'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg bg-green-100 text-green-800 font-semibold';
+            confirmation.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Redirecting to deposit page...';
+            document.body.appendChild(confirmation);
+            
+            setTimeout(() => {
+                document.body.removeChild(confirmation);
+                window.location.href = 'payments.html';
+            }, 1500);
+        });
+
+        // Related bonus links
+        document.querySelectorAll('a[href="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('This bonus offer will be displayed in a separate page.');
+            });
+        });
+    </script>
+
+    <!-- Firebase and Auth Logic -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

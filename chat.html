@@ -1,0 +1,186 @@
+<div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-white rounded-xl shadow-2xl w-80 sm:w-96 overflow-hidden z-50 border border-gray-200">
+    <!-- Chat Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
+                <i class="fas fa-headset"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold">Support Chat</h3>
+                <p class="text-blue-100 text-xs">We're online • Usually replies instantly</p>
+            </div>
+        </div>
+        <button class="text-white hover:text-blue-200 transition" id="close-chat">
+            <i class="fas fa-times text-lg"></i>
+        </button>
+    </div>
+    
+    <!-- Chat Messages -->
+    <div class="h-64 overflow-y-auto p-4 bg-gray-50" id="chat-messages">
+        <!-- System Message -->
+        <div class="flex justify-center mb-4">
+            <div class="bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-xs">
+                Today at 14:30
+            </div>
+        </div>
+        
+        <!-- Support Message -->
+        <div class="mb-4 flex justify-start">
+            <div class="flex items-start max-w-xs">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
+                    <i class="fas fa-robot text-white text-sm"></i>
+                </div>
+                <div class="bg-white rounded-2xl rounded-tl-none p-3 shadow-sm border border-gray-100">
+                    <p class="text-sm text-gray-800">Hello! I'm your support assistant. How can I help you today?</p>
+                    <span class="text-xs text-gray-500 block text-right mt-1">14:30</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Message -->
+        <div class="mb-4 flex justify-end">
+            <div class="max-w-xs">
+                <div class="bg-blue-600 text-white rounded-2xl rounded-tr-none p-3 shadow-sm">
+                    <p class="text-sm">I'm having trouble with my withdrawal</p>
+                    <span class="text-xs text-blue-200 block text-right mt-1">14:31</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Support Message -->
+        <div class="mb-4 flex justify-start">
+            <div class="flex items-start max-w-xs">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
+                    <i class="fas fa-robot text-white text-sm"></i>
+                </div>
+                <div class="bg-white rounded-2xl rounded-tl-none p-3 shadow-sm border border-gray-100">
+                    <p class="text-sm text-gray-800">I'm sorry to hear that. Can you please provide your username and the withdrawal amount?</p>
+                    <span class="text-xs text-gray-500 block text-right mt-1">14:32</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Typing Indicator -->
+        <div class="flex justify-start mb-4 hidden" id="typing-indicator">
+            <div class="flex items-start max-w-xs">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
+                    <i class="fas fa-robot text-white text-sm"></i>
+                </div>
+                <div class="bg-white rounded-2xl rounded-tl-none p-3 shadow-sm border border-gray-100">
+                    <div class="flex space-x-1">
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chat Input -->
+    <div class="p-4 border-t border-gray-200 bg-white">
+        <div class="flex space-x-2">
+            <input type="text" placeholder="Type your message..." 
+                   class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                   id="chat-input">
+            <button class="bg-blue-600 text-white w-10 h-10 rounded-full hover:bg-blue-700 transition flex items-center justify-center" id="send-message">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        <div class="flex justify-between mt-2">
+            <button class="text-gray-500 hover:text-gray-700 text-sm">
+                <i class="fas fa-paperclip mr-1"></i>Attach
+            </button>
+            <button class="text-gray-500 hover:text-gray-700 text-sm">
+                <i class="fas fa-smile mr-1"></i>Emoji
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-message');
+        const chatMessages = document.getElementById('chat-messages');
+        const closeButton = document.getElementById('close-chat');
+        const typingIndicator = document.getElementById('typing-indicator');
+        
+        // Close chat functionality
+        closeButton.addEventListener('click', function() {
+            this.closest('.fixed').style.display = 'none';
+        });
+        
+        // Send message functionality
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                // Add user message
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'mb-4 flex justify-end';
+                userMessageDiv.innerHTML = `
+                    <div class="max-w-xs">
+                        <div class="bg-blue-600 text-white rounded-2xl rounded-tr-none p-3 shadow-sm">
+                            <p class="text-sm">${message}</p>
+                            <span class="text-xs text-blue-200 block text-right mt-1">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(userMessageDiv);
+                
+                // Clear input
+                chatInput.value = '';
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Show typing indicator
+                typingIndicator.classList.remove('hidden');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Simulate response after delay
+                setTimeout(() => {
+                    typingIndicator.classList.add('hidden');
+                    
+                    const responses = [
+                        "I understand. Let me check that for you.",
+                        "Thanks for providing that information. I'm looking into it now.",
+                        "I can help with that! One moment please.",
+                        "I see the issue. Let me transfer you to a specialist.",
+                        "Your request is being processed. Is there anything else I can help with?"
+                    ];
+                    
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    
+                    const supportMessageDiv = document.createElement('div');
+                    supportMessageDiv.className = 'mb-4 flex justify-start';
+                    supportMessageDiv.innerHTML = `
+                        <div class="flex items-start max-w-xs">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-2 flex-shrink-0">
+                                <i class="fas fa-robot text-white text-sm"></i>
+                            </div>
+                            <div class="bg-white rounded-2xl rounded-tl-none p-3 shadow-sm border border-gray-100">
+                                <p class="text-sm text-gray-800">${randomResponse}</p>
+                                <span class="text-xs text-gray-500 block text-right mt-1">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            </div>
+                        </div>
+                    `;
+                    chatMessages.appendChild(supportMessageDiv);
+                    
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 2000);
+            }
+        }
+        
+        // Send message on button click
+        sendButton.addEventListener('click', sendMessage);
+        
+        // Send message on Enter key
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    });
+</script>

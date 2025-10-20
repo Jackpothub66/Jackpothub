@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bonuses & Promotions - Mines Jackpot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f8fafc;
+        }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--light);
+        }
+        
+        .bonus-card { 
+            transition: all 0.3s ease; 
+            border-left: 4px solid transparent;
+        }
+        
+        .bonus-card:hover { 
+            transform: translateY(-5px); 
+            border-left-color: var(--secondary);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bonus-card.premium {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-color: var(--accent);
+        }
+        
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #e5e7eb;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.5s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md py-4 px-6 sticky top-0 z-40">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <i class="fas fa-bomb text-yellow-500 text-3xl"></i>
+                <span class="text-xl font-bold text-blue-800">Mines Jackpot</span>
+            </a>
+            <!-- Dynamic Nav Container (for Desktop) -->
+            <div id="nav-container"></div>
+        </div>
+    </nav>
+
+    <!-- Bonuses Content -->
+    <div class="container mx-auto px-6 py-8">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-800">Bonuses & Promotions</h1>
+            <p class="text-gray-500 mt-2">Boost your gameplay with these amazing offers!</p>
+        </div>
+
+        <!-- Active Bonuses -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-bolt text-yellow-500 mr-3"></i>Active Bonuses
+            </h2>
+            
+            <!-- Welcome Bonus -->
+            <div class="bonus-card bg-white rounded-xl shadow-md p-6 mb-6">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+                    <div class="mb-4 lg:mb-0 lg:flex-1">
+                        <div class="flex items-center mb-3">
+                            <h3 class="text-2xl font-semibold text-gray-800">Welcome Bonus</h3>
+                            <span class="ml-3 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">Active</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Get a 100% bonus up to ₹1,000 on your first deposit!</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar-check text-blue-500 mr-2"></i>
+                                <span class="text-gray-700">Expires in: <strong>7 days</strong></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-rupee-sign text-green-500 mr-2"></i>
+                                <span class="text-gray-700">Min deposit: <strong>₹100</strong></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Bonus Progress</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row lg:flex-col gap-3">
+                        <a href="payments.html" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold text-center">
+                            Claim Now
+                        </a>
+                        <a href="bonus-details.html" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 text-center transition">
+                            Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Promotion -->
+            <div class="bonus-card bg-white rounded-xl shadow-md p-6 mb-6">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+                    <div class="mb-4 lg:mb-0 lg:flex-1">
+                        <div class="flex items-center mb-3">
+                            <h3 class="text-2xl font-semibold text-gray-800">Weekly Weekend Special</h3>
+                            <span class="ml-3 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">Limited Time</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Every Friday to Sunday, enjoy 50% extra bonus on deposits!</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-clock text-blue-500 mr-2"></i>
+                                <span class="text-gray-700">Valid until: <strong>Sunday, 11:59 PM</strong></span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-gift text-purple-500 mr-2"></i>
+                                <span class="text-gray-700">Max bonus: <strong>₹5,000</strong></span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center text-orange-600 font-semibold">
+                            <i class="fas fa-fire mr-2"></i>
+                            <span>🔥 124 people claimed this today</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row lg:flex-col gap-3 mt-4 lg:mt-0">
+                        <a href="bonus-details.html" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold text-center">
+                            Learn More
+                        </a>
+                        <button class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 text-center transition">
+                            <i class="far fa-bell mr-2"></i>Remind Me
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Bonuses -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-crown text-yellow-500 mr-3"></i>Premium Offers
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- VIP Bonus -->
+                <div class="bonus-card premium rounded-xl shadow-md p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-yellow-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-star text-yellow-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800">VIP Club Bonus</h3>
+                            <p class="text-gray-600">Exclusive rewards for our VIP members</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Weekly Cashback</span>
+                            <span class="font-semibold">Up to 15%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Personal Manager</span>
+                            <span class="text-green-600 font-semibold">✓ Included</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">Faster Withdrawals</span>
+                            <span class="text-green-600 font-semibold">✓ Included</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-yellow-600 text-white py-3 rounded-lg font-semibold hover:bg-yellow-700 transition">
+                        Join VIP Club
+                    </button>
+                </div>
+
+                <!-- Loyalty Program -->
+                <div class="bonus-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-medal text-purple-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800">Loyalty Program</h3>
+                            <p class="text-gray-600">Earn points with every game</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex justify-between text-sm text-gray-600 mb-2">
+                            <span>Your Points: 1,250</span>
+                            <span>Next Level: 2,000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 62.5%"></div>
+                        </div>
+                        <div class="text-center text-sm text-gray-600 mt-1">
+                            Silver Tier (62.5%)
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                        View Rewards
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Refer & Earn -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-users text-green-500 mr-3"></i>Refer & Earn
+            </h2>
+            
+            <div class="bonus-card bg-white rounded-xl shadow-md p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+                    <div class="mb-6 lg:mb-0 lg:flex-1">
+                        <div class="flex items-center mb-4">
+                            <h3 class="text-2xl font-semibold text-gray-800">Invite Friends & Earn</h3>
+                            <span class="ml-3 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">Popular</span>
+                        </div>
+                        
+                        <p class="text-gray-600 mb-6">Invite your friends and earn ₹500 for every successful referral! Your friend gets ₹500 bonus too!</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                <div class="text-2xl font-bold text-blue-600 mb-1">12</div>
+                                <div class="text-sm text-gray-600">Friends Invited</div>
+                            </div>
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <div class="text-2xl font-bold text-green-600 mb-1">8</div>
+                                <div class="text-sm text-gray-600">Active Friends</div>
+                            </div>
+                            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                <div class="text-2xl font-bold text-purple-600 mb-1">₹4,000</div>
+                                <div class="text-sm text-gray-600">Total Earned</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-3">
+                        <button id="share-btn" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold text-lg">
+                            <i class="fas fa-share-alt mr-2"></i>Share Referral Link
+                        </button>
+                        <div class="text-center">
+                            <span class="text-gray-600">Your code: </span>
+                            <code class="bg-gray-100 px-3 py-1 rounded border font-mono font-bold">MINES500</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Challenges -->
+        <div>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fas fa-tasks text-blue-500 mr-3"></i>Daily Challenges
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bonus-card bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Today's Missions</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-play-circle text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Play 5 Games</h4>
+                                    <p class="text-gray-600 text-sm">Complete 5 games today</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-green-600">₹200</p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="mr-2">3/5</span>
+                                    <div class="w-16 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-600 h-2 rounded-full" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-trophy text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Win 3 Games</h4>
+                                    <p class="text-gray-600 text-sm">Win at least 3 games</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-green-600">₹500</p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="mr-2">1/3</span>
+                                    <div class="w-16 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-600 h-2 rounded-full" style="width: 33%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-bomb text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Avoid 10 Mines</h4>
+                                    <p class="text-gray-600 text-sm">Successfully avoid mines in gameplay</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-green-600">₹300</p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="mr-2">7/10</span>
+                                    <div class="w-16 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-600 h-2 rounded-full" style="width: 70%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bonus-card bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Weekly Leaderboard</h3>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                            <div class="flex items-center">
+                                <span class="text-yellow-600 font-bold text-lg mr-3">🥇</span>
+                                <div>
+                                    <p class="font-semibold">MinesMaster99</p>
+                                    <p class="text-sm text-gray-600">₹12,450 won</p>
+                                </div>
+                            </div>
+                            <span class="bg-yellow-600 text-white px-2 py-1 rounded text-sm font-semibold">You</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <span class="text-gray-500 font-bold text-lg mr-3">🥈</span>
+                                <div>
+                                    <p class="font-semibold">LuckyStrike</p>
+                                    <p class="text-sm text-gray-600">₹10,200 won</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+                            <div class="flex items-center">
+                                <span class="text-orange-500 font-bold text-lg mr-3">🥉</span>
+                                <div>
+                                    <p class="font-semibold">BombExpert</p>
+                                    <p class="text-sm text-gray-600">₹8,750 won</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-gray-600 mb-2">Your position: <strong>#1</strong></p>
+                        <p class="text-green-600 font-semibold">Weekly Prize: ₹5,000</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden modal-overlay">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-semibold text-gray-800">Share with Friends</h3>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            
+            <div class="mb-6">
+                <p class="text-gray-600 mb-4">Share your referral link and earn ₹500 when your friend signs up and makes their first deposit!</p>
+                
+                <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                    <p class="text-sm text-gray-600 mb-2">Your referral link:</p>
+                    <div class="flex">
+                        <input type="text" value="https://minesjackpot.com/ref/MINES500" 
+                               class="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:border-blue-500 font-mono text-sm"
+                               readonly>
+                        <button id="copy-link" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="text-gray-600 mb-4 text-center">Share via:</p>
+            <div class="flex justify-center space-x-6">
+                <!-- WhatsApp -->
+                <a href="whatsapp://send?text=Join%20Mines%20Jackpot%20and%20get%20a%20%E2%82%B9500%20bonus!%20Use%20my%20link:%20https://minesjackpot.com/ref/MINES500" 
+                   target="_blank" 
+                   class="text-green-500 hover:text-green-600 transition transform hover:scale-110">
+                    <i class="fab fa-whatsapp fa-3x"></i>
+                </a>
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https://minesjackpot.com/ref/MINES500" 
+                   target="_blank" 
+                   class="text-blue-800 hover:text-blue-900 transition transform hover:scale-110">
+                    <i class="fab fa-facebook fa-3x"></i>
+                </a>
+                <!-- Twitter -->
+                <a href="https://twitter.com/intent/tweet?text=Join%20Mines%20Jackpot%20and%20get%20a%20%E2%82%B9500%20bonus!&url=https://minesjackpot.com/ref/MINES500" 
+                   target="_blank" 
+                   class="text-blue-400 hover:text-blue-500 transition transform hover:scale-110">
+                    <i class="fab fa-twitter fa-3x"></i>
+                </a>
+                <!-- Telegram -->
+                <a href="https://t.me/share/url?url=https://minesjackpot.com/ref/MINES500&text=Join%20Mines%20Jackpot%20and%20get%20a%20%E2%82%B9500%20bonus!" 
+                   target="_blank" 
+                   class="text-blue-500 hover:text-blue-600 transition transform hover:scale-110">
+                    <i class="fab fa-telegram fa-3x"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation Container -->
+    <div id="bottom-nav-container" class="md:hidden"></div>
+
+    <script>
+        // Modal functionality
+        const shareBtn = document.getElementById('share-btn');
+        const shareModal = document.getElementById('share-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const copyLinkBtn = document.getElementById('copy-link');
+
+        shareBtn.addEventListener('click', () => {
+            shareModal.classList.remove('hidden');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            shareModal.classList.add('hidden');
+        });
+
+        // Close modal when clicking on the overlay
+        shareModal.addEventListener('click', (event) => {
+            if (event.target === shareModal) {
+                shareModal.classList.add('hidden');
+            }
+        });
+
+        // Copy link functionality
+        copyLinkBtn.addEventListener('click', () => {
+            const linkInput = document.querySelector('input[type="text"]');
+            linkInput.select();
+            document.execCommand('copy');
+            
+            // Show confirmation
+            const originalText = copyLinkBtn.innerHTML;
+            copyLinkBtn.innerHTML = '<i class="fas fa-check"></i>';
+            copyLinkBtn.classList.remove('bg-blue-600');
+            copyLinkBtn.classList.add('bg-green-600');
+            
+            setTimeout(() => {
+                copyLinkBtn.innerHTML = originalText;
+                copyLinkBtn.classList.remove('bg-green-600');
+                copyLinkBtn.classList.add('bg-blue-600');
+            }, 2000);
+        });
+
+        // Claim bonus buttons
+        document.querySelectorAll('a[href="payments.html"]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                if (button.textContent.includes('Claim')) {
+                    e.preventDefault();
+                    // Show success message
+                    alert('Bonus claimed successfully! Redirecting to deposit page...');
+                    window.location.href = 'payments.html';
+                }
+            });
+        });
+    </script>
+
+    <!-- Firebase and Auth Logic -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

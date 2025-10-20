@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security & Fair Play - Mines Jackpot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f8fafc;
+        }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--light);
+        }
+        
+        .security-card { 
+            transition: all 0.3s ease; 
+            border-left: 4px solid transparent;
+        }
+        
+        .security-card:hover { 
+            transform: translateY(-5px); 
+            border-left-color: var(--secondary);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #e5e7eb;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.5s ease;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--success);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Mobile Menu Styles */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Top Navigation -->
+    <nav class="bg-white/90 backdrop-blur-md shadow-md py-4 px-6 sticky top-0 z-40">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center space-x-2">
+                <i class="fas fa-bomb text-yellow-500 text-3xl"></i>
+                <span class="text-xl font-bold text-blue-800">Mines Jackpot</span>
+            </a>
+            
+            <!-- Dynamic Desktop Nav Container -->
+            <div id="nav-container-desktop"></div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 hover:text-blue-600 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 bg-white z-50 transform -translate-x-full md:hidden">
+        <div class="flex justify-between items-center p-6 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-blue-800">Menu</h2>
+            <button id="close-mobile-menu" class="text-gray-700 hover:text-blue-600">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        <div id="nav-container-mobile" class="py-2">
+            <!-- Mobile links will be injected here by auth.js -->
+        </div>
+    </div>
+
+    <!-- Security Content -->
+    <div class="container mx-auto px-6 py-8">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-800">Security & Fair Play</h1>
+            <p class="text-gray-500 mt-2">Your safety and fair gameplay are our top priorities</p>
+        </div>
+
+        <!-- Security Score -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Security Score</h2>
+                    <p class="text-gray-600">Your account security level: <span class="font-semibold text-green-600">Excellent</span></p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <div class="flex items-center">
+                        <div class="text-3xl font-bold text-gray-800 mr-4">95%</div>
+                        <div class="w-48">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+            <!-- Left Column: Security Features -->
+            <div class="space-y-8">
+                <!-- Account Security -->
+                <div class="security-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-start mb-6">
+                        <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-shield-alt text-blue-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800">Account Security</h2>
+                            <p class="text-gray-600">Protect your account with advanced security features</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Two-Factor Authentication</h3>
+                                <p class="text-gray-600 text-sm">Add an extra layer of security to your account</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Login Alerts</h3>
+                                <p class="text-gray-600 text-sm">Get notified of new login attempts</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Session Timeout</h3>
+                                <p class="text-gray-600 text-sm">Automatically log out after 30 minutes of inactivity</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+                        Update Security Settings
+                    </button>
+                </div>
+
+                <!-- Privacy Settings -->
+                <div class="security-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-start mb-6">
+                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-user-secret text-purple-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800">Privacy Settings</h2>
+                            <p class="text-gray-600">Control how your information is shared and used</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Profile Visibility</h3>
+                                <p class="text-gray-600 text-sm">Show your profile in leaderboards</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Data Sharing</h3>
+                                <p class="text-gray-600 text-sm">Allow anonymous data for improvement</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Marketing Emails</h3>
+                                <p class="text-gray-600 text-sm">Receive promotional offers and updates</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="flex items-start">
+                            <i class="fas fa-info-circle text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-semibold text-blue-800">Your Privacy Matters</h4>
+                                <p class="text-blue-700 text-sm mt-1">
+                                    We never share your personal information with third parties without your consent.
+                                    Read our <a href="#" class="underline font-semibold">Privacy Policy</a> for more details.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Fair Play & Encryption -->
+            <div class="space-y-8">
+                <!-- Fair Play -->
+                <div class="security-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-start mb-6">
+                        <div class="bg-green-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-scale-balanced text-green-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800">Fair Play Guarantee</h2>
+                            <p class="text-gray-600">Transparent and certified random gameplay</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div class="flex items-center p-4 bg-green-50 rounded-lg border border-green-200">
+                            <i class="fas fa-certificate text-green-600 text-xl mr-4"></i>
+                            <div>
+                                <h3 class="font-semibold text-green-800">RNG Certified</h3>
+                                <p class="text-green-700 text-sm">Our Random Number Generator is certified by iTech Labs</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <i class="fas fa-chart-bar text-blue-600 text-xl mr-4"></i>
+                            <div>
+                                <h3 class="font-semibold text-blue-800">Provably Fair</h3>
+                                <p class="text-blue-700 text-sm">Verify every game result using our provably fair system</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-4 bg-purple-50 rounded-lg border border-purple-200">
+                            <i class="fas fa-eye text-purple-600 text-xl mr-4"></i>
+                            <div>
+                                <h3 class="font-semibold text-purple-800">Transparent Odds</h3>
+                                <p class="text-purple-700 text-sm">Clear display of game odds and probabilities</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button class="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                            Verify Game
+                        </button>
+                        <button class="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+                            View Certificate
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Data Encryption -->
+                <div class="security-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-start mb-6">
+                        <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-lock text-indigo-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800">Data Protection</h2>
+                            <p class="text-gray-600">Advanced encryption for your safety</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                            <h3 class="font-semibold text-indigo-800 mb-2">256-bit SSL Encryption</h3>
+                            <p class="text-indigo-700 text-sm">
+                                All transactions and personal data are protected with industry-standard 
+                                256-bit SSL encryption technology. This ensures that your information 
+                                remains confidential and secure from unauthorized access.
+                            </p>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-gray-800 mb-2">Secure Payment Processing</h3>
+                            <p class="text-gray-700 text-sm">
+                                We use PCI-DSS compliant payment processors to ensure your financial 
+                                information is handled with the highest security standards.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="block text-center bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                        Learn More About Encryption
+                    </a>
+                </div>
+
+                <!-- Responsible Gaming -->
+                <div class="security-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-start mb-6">
+                        <div class="bg-orange-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-heart text-orange-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800">Responsible Gaming</h2>
+                            <p class="text-gray-600">Tools to help you stay in control</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div class="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                            <h3 class="font-semibold text-orange-800 mb-2">Deposit Limits</h3>
+                            <p class="text-orange-700 text-sm">
+                                Set daily, weekly, or monthly deposit limits to manage your spending.
+                            </p>
+                            <button class="mt-2 text-orange-600 hover:text-orange-800 font-semibold text-sm">
+                                Set Limits Now →
+                            </button>
+                        </div>
+                        
+                        <div class="p-4 bg-red-50 rounded-lg border border-red-200">
+                            <h3 class="font-semibold text-red-800 mb-2">Self-Exclusion</h3>
+                            <p class="text-red-700 text-sm">
+                                Take a break from gaming with our self-exclusion tools.
+                            </p>
+                            <button class="mt-2 text-red-600 hover:text-red-800 font-semibold text-sm">
+                                Learn More →
+                            </button>
+                        </div>
+                        
+                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <h3 class="font-semibold text-blue-800 mb-2">Reality Check</h3>
+                            <p class="text-blue-700 text-sm">
+                                Regular reminders of your gaming session duration.
+                            </p>
+                            <button class="mt-2 text-blue-600 hover:text-blue-800 font-semibold text-sm">
+                                Enable Reminders →
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-gray-600 text-sm">
+                            If you need help with gambling addiction, contact:
+                            <a href="#" class="text-blue-600 hover:underline font-semibold">Gambling Therapy</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Security Activity -->
+        <div class="mt-12 bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Recent Security Activity</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Device</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <i class="fas fa-sign-in-alt text-green-500 mr-3"></i>
+                                    <span class="font-medium text-gray-700">Login</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Chrome, Windows</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Mumbai, India</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">2 hours ago</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Success</span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <i class="fas fa-key text-blue-500 mr-3"></i>
+                                    <span class="font-medium text-gray-700">Password Changed</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Safari, iOS</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Delhi, India</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">1 day ago</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Success</span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <i class="fas fa-shield-alt text-purple-500 mr-3"></i>
+                                    <span class="font-medium text-gray-700">2FA Enabled</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Android App</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Bangalore, India</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">3 days ago</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Success</span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-3"></i>
+                                    <span class="font-medium text-gray-700">Failed Login</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Firefox, Linux</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Unknown</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">1 week ago</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Blocked</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <button class="text-blue-600 hover:text-blue-800 font-semibold">
+                    View Full Activity Log
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation Container -->
+    <div id="bottom-nav-container" class="md:hidden"></div>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('-translate-x-full');
+        });
+
+        closeMobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.add('-translate-x-full');
+        });
+        
+        // Toggle switch functionality
+        document.querySelectorAll('.toggle-switch input').forEach(switchInput => {
+            switchInput.addEventListener('change', function() {
+                const card = this.closest('.security-card');
+                const message = this.checked ? 'Setting enabled successfully!' : 'Setting disabled successfully!';
+                
+                // Show feedback
+                const feedback = document.createElement('div');
+                feedback.className = 'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg bg-green-100 text-green-800 font-semibold';
+                feedback.textContent = message;
+                document.body.appendChild(feedback);
+                
+                setTimeout(() => {
+                    document.body.removeChild(feedback);
+                }, 3000);
+            });
+        });
+
+        // Update security settings button
+        document.querySelector('button[class*="bg-blue-600"]').addEventListener('click', function() {
+            const feedback = document.createElement('div');
+            feedback.className = 'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg bg-green-100 text-green-800 font-semibold';
+            feedback.textContent = 'Security settings updated successfully!';
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                document.body.removeChild(feedback);
+            }, 3000);
+        });
+
+        // Verify game button
+        document.querySelector('button[class*="bg-green-600"]').addEventListener('click', function() {
+            alert('Game verification feature coming soon! You will be able to verify the fairness of each game using cryptographic proofs.');
+        });
+
+        // Set limits button
+        document.querySelector('button[class*="text-orange-600"]').addEventListener('click', function() {
+            alert('Deposit limits feature coming soon! You will be able to set daily, weekly, and monthly deposit limits.');
+        });
+    </script>
+
+    <!-- Firebase and Auth Logic -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

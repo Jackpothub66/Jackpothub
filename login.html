@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mines Jackpot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f8fafc;
+        }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--light);
+            padding-bottom: 100px;
+        }
+        
+        .form-container { 
+            max-width: 450px; 
+        }
+        
+        .input-field { 
+            transition: all 0.3s ease; 
+        }
+        
+        .input-field:focus { 
+            border-color: var(--secondary); 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); 
+        }
+        
+        .error-message { 
+            color: var(--danger); 
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .social-btn {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .floating-label {
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .input-field:focus + .floating-label,
+        .input-field:not(:placeholder-shown) + .floating-label {
+            transform: translateY(-24px) scale(0.875);
+            color: var(--secondary);
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md py-4 px-6 sticky top-0 z-40">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <i class="fas fa-bomb text-yellow-500 text-3xl"></i>
+                <span class="text-xl font-bold text-blue-800">Mines Jackpot</span>
+            </a>
+            <!-- Dynamic Nav Container (for Desktop) -->
+            <div id="nav-container"></div>
+        </div>
+    </nav>
+    
+    <!-- Login Form -->
+    <div class="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="form-container w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-8 sm:p-10">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-lock text-blue-600 text-2xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800">Welcome Back!</h2>
+                    <p class="mt-2 text-gray-500">Log in to continue your gaming journey</p>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-6">
+                    <div class="relative">
+                        <input type="email" id="email" name="email" required placeholder=" "
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field peer">
+                        <label for="email" class="floating-label absolute left-4 top-3 text-gray-500 bg-white px-1">
+                            <i class="fas fa-envelope mr-2"></i>Email Address
+                        </label>
+                    </div>
+
+                    <div class="relative">
+                        <input type="password" id="password" name="password" required placeholder=" "
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field peer">
+                        <label for="password" class="floating-label absolute left-4 top-3 text-gray-500 bg-white px-1">
+                            <i class="fas fa-lock mr-2"></i>Password
+                        </label>
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                        </label>
+                        <a href="#" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">
+                            Forgot password?
+                        </a>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="error-message" class="error-message text-center pt-2"></div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold text-lg">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Log In
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+
+                <!-- Social Login -->
+                <div class="space-y-3">
+                    <button id="google-signin-btn" class="w-full social-btn bg-white py-3 rounded-lg font-semibold flex items-center justify-center">
+                        <i class="fab fa-google text-red-500 text-lg mr-3"></i>
+                        Sign in with Google
+                    </button>
+                    
+                    <button id="facebook-signin-btn" class="w-full social-btn bg-white py-3 rounded-lg font-semibold flex items-center justify-center">
+                        <i class="fab fa-facebook text-blue-600 text-lg mr-3"></i>
+                        Sign in with Facebook
+                    </button>
+                </div>
+
+                <!-- Sign Up Link -->
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600">Don't have an account? 
+                        <a href="signup.html" class="text-blue-600 hover:text-blue-800 font-semibold">Sign up now</a>
+                    </p>
+                </div>
+
+                <!-- Security Notice -->
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="flex items-start">
+                        <i class="fas fa-shield-alt text-blue-600 mt-1 mr-3"></i>
+                        <div>
+                            <h4 class="font-semibold text-blue-800 text-sm">Secure Login</h4>
+                            <p class="text-blue-700 text-xs mt-1">
+                                Your login is protected with industry-standard encryption. We never share your data.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Bottom Navigation Container -->
+    <div id="bottom-nav-container" class="md:hidden"></div>
+    
+    <!-- Firebase and Auth Logic -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        // DOM Elements
+        const loginForm = document.getElementById('login-form');
+        const googleSignInBtn = document.getElementById('google-signin-btn');
+        const facebookSignInBtn = document.getElementById('facebook-signin-btn');
+        const errorMessageDiv = document.getElementById('error-message');
+
+        // Show loading state
+        function setLoadingState(button, isLoading) {
+            if (isLoading) {
+                button.disabled = true;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Signing in...';
+                button.setAttribute('data-original-text', originalText);
+            } else {
+                button.disabled = false;
+                const originalText = button.getAttribute('data-original-text');
+                if (originalText) {
+                    button.innerHTML = originalText;
+                }
+            }
+        }
+
+        // Show success message
+        function showSuccessMessage() {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg bg-green-100 text-green-800 font-semibold';
+            successDiv.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Login successful! Redirecting...';
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                document.body.removeChild(successDiv);
+            }, 3000);
+        }
+
+        // Email/Password Login
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = loginForm.email.value;
+            const password = loginForm.password.value;
+            const submitButton = loginForm.querySelector('button[type="submit"]');
+            
+            errorMessageDiv.textContent = '';
+            setLoadingState(submitButton, true);
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    showSuccessMessage();
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                })
+                .catch(error => {
+                    setLoadingState(submitButton, false);
+                    
+                    let errorMessage = 'An unexpected error occurred. Please try again.';
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'No account found with this email address.';
+                    } else if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'Incorrect password. Please try again.';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Please enter a valid email address.';
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage = 'Too many failed attempts. Please try again later.';
+                    }
+                    
+                    errorMessageDiv.textContent = errorMessage;
+                    console.error('Login error:', error.message);
+                });
+        });
+
+        // Google Sign In
+        googleSignInBtn.addEventListener('click', () => {
+            const googleProvider = new firebase.auth.GoogleAuthProvider();
+            errorMessageDiv.textContent = '';
+            setLoadingState(googleSignInBtn, true);
+            
+            auth.signInWithPopup(googleProvider)
+                .then(result => {
+                    showSuccessMessage();
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                }).catch(error => {
+                    setLoadingState(googleSignInBtn, false);
+                    errorMessageDiv.textContent = 'Failed to sign in with Google. Please try again.';
+                    console.error('Google Sign-in error:', error.message);
+                });
+        });
+
+        // Facebook Sign In
+        facebookSignInBtn.addEventListener('click', () => {
+            const facebookProvider = new firebase.auth.FacebookAuthProvider();
+            errorMessageDiv.textContent = '';
+            setLoadingState(facebookSignInBtn, true);
+            
+            auth.signInWithPopup(facebookProvider)
+                .then(result => {
+                    showSuccessMessage();
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                }).catch(error => {
+                    setLoadingState(facebookSignInBtn, false);
+                    errorMessageDiv.textContent = 'Failed to sign in with Facebook. Please try again.';
+                    console.error('Facebook Sign-in error:', error.message);
+                });
+        });
+
+        // Enhanced input interactions
+        document.querySelectorAll('.input-field').forEach(input => {
+            // Add focus effects
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('ring-2', 'ring-blue-500', 'ring-opacity-50');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('ring-2', 'ring-blue-500', 'ring-opacity-50');
+            });
+            
+            // Real-time validation
+            input.addEventListener('input', function() {
+                if (this.type === 'email') {
+                    const isValid = this.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+                    if (this.value && !isValid) {
+                        this.classList.add('border-red-500');
+                    } else {
+                        this.classList.remove('border-red-500');
+                    }
+                }
+            });
+        });
+
+        // Forgot password functionality
+        document.querySelector('a[href="#"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            const email = prompt('Please enter your email address to reset your password:');
+            if (email) {
+                auth.sendPasswordResetEmail(email)
+                    .then(() => {
+                        alert('Password reset email sent! Please check your inbox.');
+                    })
+                    .catch(error => {
+                        alert('Error sending reset email. Please check the email address and try again.');
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
