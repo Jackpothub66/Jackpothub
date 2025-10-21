@@ -123,7 +123,7 @@
             <header class="flex justify-between items-center">
                 <div class="flex items-center gap-2 bg-slate-800/70 px-4 py-2 rounded-full border border-slate-600">
                     <span class="text-yellow-400 text-2xl">💰</span>
-                    <span id="balance" class="font-bold text-lg text-white">₹1000.00</span>
+                    <span id="balance" class="font-bold text-lg text-white">₹0.00</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <button id="add-funds-btn" class="bg-green-500 hover:bg-green-600 transition-colors text-white font-bold w-10 h-10 rounded-full text-2xl">+</button>
@@ -144,7 +144,7 @@
                 <div class="flex items-center gap-2"><span id="bombs-left" class="text-2xl font-bold">3</span><span class="text-3xl">💣</span></div>
             </div>
 
-            <!-- Multiplier Bar (Restored to original position) -->
+            <!-- Multiplier Bar -->
             <div class="flex items-center justify-center space-x-1 mb-4">
                 <button id="scroll-left" class="bg-slate-700/50 hover:bg-slate-600 rounded-md p-1 w-8 h-8 text-lg transition-colors disabled:opacity-25 disabled:cursor-not-allowed flex-shrink-0"><i class="fa-solid fa-chevron-left"></i></button>
                 <div id="multiplier-bar" class="multiplier-bar flex justify-start items-center text-xs text-slate-400 px-1 space-x-1 flex-grow overflow-hidden"></div>
@@ -156,7 +156,6 @@
             
             <!-- Footer Controls -->
             <footer class="grid grid-cols-3 gap-2 sm:gap-4 items-stretch">
-                <!-- Bet Controls -->
                 <div class="flex flex-col items-center justify-center bg-slate-800/70 p-2 rounded-xl">
                     <div class="flex items-center justify-center gap-2 w-full">
                         <button id="decrease-bet" class="control-btn">-</button>
@@ -165,11 +164,7 @@
                     </div>
                     <span class="text-xs text-slate-400 mt-1" data-translate-key="mines_bet_label">Bet</span>
                 </div>
-        
-                <!-- Action Button -->
                 <button id="action-button" class="w-full h-full bg-green-600 hover:bg-green-700 disabled:bg-slate-600 transition-all duration-300 text-white font-bold text-lg rounded-lg shadow-lg"></button>
-                
-                <!-- Mines Controls -->
                 <div class="flex flex-col items-center justify-center bg-slate-800/70 p-2 rounded-xl">
                     <div class="flex items-center justify-center gap-2 w-full">
                         <button id="decrease-mines" class="control-btn">-</button>
@@ -205,335 +200,351 @@
         </div>
     </div>
     
+    <!-- Supabase and Auth Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    
     <!-- =========== EMBEDDED JAVASCRIPT =========== -->
     <script>
-    // --- TRANSLATION DATA ---
-    const translations = {
-        en: { mines_win: "WIN", mines_bet_label: "Bet", mines_mines_label: "Mines", mines_bet_btn: "Bet", mines_cashout_btn: "Cashout", mines_how_to_play_title: "How to Play?", mines_how_to_play_1: "1. Set Your Bet and Mines: Choose how much to bet and how many bombs to hide on the grid.", mines_how_to_play_2: "2. Find the Gems: Click on tiles to uncover them. Each gem you find increases your winnings.", mines_how_to_play_3: "3. Avoid the Bombs: If you uncover a bomb, the game ends and you lose your bet for that round.", mines_how_to_play_4: "4. Cash Out Anytime: You can cash out your current winnings after any successful gem find by clicking the 'Cashout' button.", mines_how_to_play_5: "5. Find a Treasure Chest: Uncover a special treasure tile for an instant bonus prize!", mines_got_it_btn: "Got It!", toast_not_enough_balance: "Not enough balance to bet!", toast_hit_bomb: "You hit a bomb!", toast_won: "You won", toast_bonus_prize: "Bonus Prize!" },
-        hi: { mines_win: "जीत", mines_bet_label: "शर्त", mines_mines_label: "माइन्स", mines_bet_btn: "शर्त लगाएं", mines_cashout_btn: "कैशआउट", mines_how_to_play_title: "कैसे खेलें?", mines_how_to_play_1: "1. अपनी शर्त और माइन्स सेट करें: यह चुनें कि ग्रिड पर कितनी शर्त लगानी है और कितने बम छिपाने हैं।", mines_how_to_play_2: "2. रत्न खोजें: टाइलों पर क्लिक करके उन्हें खोलें। आपके द्वारा खोजा गया प्रत्येक रत्न आपकी जीत को बढ़ाता है।", mines_how_to_play_3: "3. बम से बचें: यदि आप एक बम खोलते हैं, तो खेल समाप्त हो जाता है और आप उस दौर के लिए अपनी शर्त हार जाते हैं।", mines_how_to_play_4: "4. कभी भी कैश आउट करें: आप 'कैशआउट' बटन पर क्लिक करके किसी भी सफल रत्न खोज के बाद अपनी वर्तमान जीत को कैश आउट कर सकते हैं।", mines_how_to_play_5: "5. खजाना खोजें: तत्काल बोनस पुरस्कार के लिए एक विशेष खजाना टाइल खोलें!", mines_got_it_btn: "समझ गया!", toast_not_enough_balance: "शर्त लगाने के लिए पर्याप्त शेष राशि नहीं है!", toast_hit_bomb: "आप बम से टकरा गए!", toast_won: "आप जीत गए", toast_bonus_prize: "बोनस पुरस्कार!" }
-    };
-
-    let jackpotTimerInterval = null;
-    let backgroundMusic = null;
-    const sounds = {};
-
-    function initializeMinesGame() {
-        const UIElements = {
-            balance: document.getElementById("balance"),
-            coinsLeft: document.getElementById("coins-left"), bombsLeft: document.getElementById("bombs-left"),
-            grid: document.getElementById("game-grid"), decreaseBet: document.getElementById("decrease-bet"),
-            increaseBet: document.getElementById("increase-bet"), betAmount: document.getElementById("bet-amount"),
-            decreaseMines: document.getElementById("decrease-mines"), increaseMines: document.getElementById("increase-mines"),
-            minesCount: document.getElementById("mines-count"), actionButton: document.getElementById("action-button"),
-            winAmount: document.getElementById("win-amount"), jackpot: document.getElementById("jackpot"),
-            multiplierBar: document.getElementById("multiplier-bar"), 
-            toast: document.getElementById("toast"),
-            winPopup: document.getElementById("win-popup"), winPopupText: document.getElementById("win-popup-text"),
-            helpBtn: document.getElementById("help-btn"), modal: document.getElementById("how-to-play-modal"),
-            closeModalBtn: document.getElementById("close-modal-btn"), addFundsBtn: document.getElementById("add-funds-btn"),
-            scrollLeft: document.getElementById("scroll-left"), scrollRight: document.getElementById("scroll-right")
-        };
-        if (!UIElements.balance || !UIElements.grid) { console.error("Mines game elements not found!"); return; }
-
-        const TOTAL_TILES = 25;
-        let balance = parseFloat(localStorage.getItem("minesGameBalance")) || 1000.0;
-        let betAmount = parseInt(localStorage.getItem("minesGameBetAmount")) || 10;
-        let minesCount = parseInt(localStorage.getItem("minesGameMinesCount")) || 3;
-        let gameState = "betting"; 
-        let gridData = [];
-        let openedTiles = 0;
-        let currentWin = 0;
-        let bonusStepIndex = -1;
-        let multiplierOffset = 0;
-        let currentLang = localStorage.getItem("jackpothubLanguage") || "en";
-
-        const soundUrls = {
-            background: "https://cdn.pixabay.com/download/audio/2022/08/04/audio_2dde6b7562.mp3?filename=slot-machine-97365.mp3",
-            click: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_28b1b9728f.mp3?filename=mouse-click-153941.mp3",
-            coin: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c82f482f.mp3?filename=coin-collect-retro-8-bit-sound-effect-145251.mp3",
-            bomb: "https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c152a6.mp3?filename=explosion-6055.mp3",
-            bet: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_198a8f1a36.mp3?filename=cash-register-purchase-87343.mp3",
-            cashout: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_a874c46e23.mp3?filename=success-fanfare-trumpets-6185.mp3",
-            bonus: "https://cdn.pixabay.com/download/audio/2022/05/21/audio_a17c774191.mp3?filename=bonus-113259.mp3"
-        };
-        function initSounds() { Object.keys(soundUrls).forEach(key => { if (!sounds[key]) { sounds[key] = new Audio(soundUrls[key]); sounds[key].volume = key === 'background' ? 0.15 : 0.5; } }); backgroundMusic = sounds['background']; backgroundMusic.loop = true; }
-        function playSound(name) { try { if (sounds[name]) { sounds[name].currentTime = 0; sounds[name].play().catch(() => {}); } } catch (e) {} }
-        function playBackgroundMusic() { if (backgroundMusic && backgroundMusic.paused) { backgroundMusic.play().catch(() => {}); } }
-        
-        function animateJackpot(startValue, endValue) {
-            const duration = 1500; let startTime = null;
-            function step(currentTime) {
-                if (!startTime) startTime = currentTime;
-                const progress = Math.min((currentTime - startTime) / duration, 1);
-                const easeOutProgress = 1 - Math.pow(1 - progress, 3);
-                const currentValue = startValue + (endValue - startValue) * easeOutProgress;
-                UIElements.jackpot.textContent = `₹${currentValue.toFixed(2)}`;
-                if (progress < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
-        }
-
-        function setupJackpotTimer() {
-            if (jackpotTimerInterval) clearInterval(jackpotTimerInterval);
-            let resetTime = localStorage.getItem('jackpotResetTime');
-            let currentJackpot = parseFloat(localStorage.getItem('currentJackpot')) || 0;
-            if (!resetTime || Date.now() > resetTime) {
-                currentJackpot = 0;
-                resetTime = Date.now() + (15 * 60 * 1000); // 15 minutes
-                localStorage.setItem('jackpotResetTime', resetTime);
-                localStorage.setItem('currentJackpot', '0');
-            }
-            UIElements.jackpot.textContent = `₹${currentJackpot.toFixed(2)}`;
-            jackpotTimerInterval = setInterval(() => {
-                if (Date.now() > localStorage.getItem('jackpotResetTime')) {
-                    localStorage.setItem('currentJackpot', '0');
-                    UIElements.jackpot.textContent = '₹0.00';
-                    localStorage.setItem('jackpotResetTime', Date.now() + (15 * 60 * 1000));
-                }
-            }, 1000);
-        }
-        
-        // --- UI Update Functions ---
-        function updateBalanceDisplay() { UIElements.balance.textContent = `₹${balance.toFixed(2)}`; localStorage.setItem("minesGameBalance", balance.toString()); }
-        function updateBetDisplay() { UIElements.betAmount.textContent = betAmount; localStorage.setItem("minesGameBetAmount", betAmount.toString()); }
-        function updateMinesDisplay() { UIElements.minesCount.textContent = minesCount; UIElements.bombsLeft.textContent = minesCount; UIElements.coinsLeft.textContent = TOTAL_TILES - minesCount; localStorage.setItem("minesGameMinesCount", minesCount.toString()); }
-        function updateWinDisplay() { UIElements.winAmount.textContent = `₹${currentWin.toFixed(2)}`; }
-        
-        function showToast(message, type = "error") {
-            UIElements.toast.className = `fixed top-5 left-1/2 transform -translate-x-1/2 ${type === "error" ? "bg-red-500" : "bg-green-500"} text-white py-3 px-6 rounded-lg shadow-lg transition-all duration-500 z-50 text-lg font-bold text-center`;
-            UIElements.toast.textContent = message;
-            UIElements.toast.classList.add("opacity-100", "translate-y-0");
-            setTimeout(() => { UIElements.toast.classList.remove("opacity-100", "translate-y-0"); UIElements.toast.classList.add("opacity-0", "-translate-y-10"); }, 3000);
-        }
-        
-        function showWinPopup(amount) {
-            UIElements.winPopupText.textContent = `${translations[currentLang].toast_won} ₹${amount.toFixed(2)}!`;
-            UIElements.winPopup.classList.remove("opacity-0", "scale-0");
-            UIElements.winPopup.classList.add("opacity-100", "scale-100");
-            playSound("cashout");
-            setTimeout(() => { UIElements.winPopup.classList.remove("opacity-100", "scale-100"); UIElements.winPopup.classList.add("opacity-0", "scale-0"); }, 3000);
-        }
-
-        function updateMultiplierBar() {
-            UIElements.multiplierBar.innerHTML = "";
-            bonusStepIndex = Math.max(3, 10 - Math.floor(minesCount / 5));
-            for (let i = 0; i < 6; i++) {
-                const el = document.createElement("div");
-                el.className = 'flex-shrink-0 w-1/6 text-center bg-slate-700 py-1 rounded-md flex items-center justify-center';
-                UIElements.multiplierBar.appendChild(el);
-            }
-            updateActiveMultiplier();
-        }
-
-        function updateActiveMultiplier() {
-            UIElements.multiplierBar.childNodes.forEach((el, index) => {
-                el.classList.remove('active', 'bonus-step');
-                el.innerHTML = '';
-                const step = (gameState === "betting" ? 0 : openedTiles) + index + multiplierOffset;
-                if (step > 0 && step <= TOTAL_TILES - minesCount) {
-                    if (step === bonusStepIndex) {
-                        el.innerHTML = '🎁';
-                        el.classList.add('bonus-step');
-                    } else {
-                        el.textContent = `${getMultiplierForStep(step).toFixed(2)}x`;
-                    }
-                } else {
-                    el.textContent = '-';
-                }
-                if (index === 0 && gameState === "playing") {
-                     el.classList.add('active');
-                }
-            });
-            UIElements.scrollLeft.disabled = multiplierOffset === 0;
-            UIElements.scrollRight.disabled = (gameState === "betting" ? 0 : openedTiles) + multiplierOffset >= TOTAL_TILES - minesCount - 6;
-        }
-        
-        // --- Core Game Functions ---
-        function createGrid() {
-            UIElements.grid.innerHTML = "";
-            gameState = "betting";
-            gridData = []; openedTiles = 0; currentWin = 0; multiplierOffset = 0;
-            updateWinDisplay();
-            
-            for (let i = 0; i < TOTAL_TILES; i++) {
-                const tileEl = document.createElement("div");
-                tileEl.className = "tile aspect-square";
-                tileEl.innerHTML = '<div class="tile-inner"><div class="tile-front"></div><div class="tile-back"></div></div>';
-                tileEl.addEventListener("click", () => handleTileClick(i));
-                UIElements.grid.appendChild(tileEl);
-            }
-            setControlsState(false);
-            UIElements.actionButton.textContent = translations[currentLang].mines_bet_btn;
-            UIElements.actionButton.disabled = false;
-            UIElements.actionButton.className = "w-full h-full bg-green-600 hover:bg-green-700 disabled:bg-slate-600 transition-all duration-300 text-white font-bold text-lg rounded-lg shadow-lg";
-            updateMultiplierBar(); // Update bar in betting state
-        }
-
-        function startGame() {
-            if (balance < betAmount) { return showToast(translations[currentLang].toast_not_enough_balance); }
-            playSound("bet");
-            balance -= betAmount;
-            updateBalanceDisplay();
-            
-            let jackpotContribution = betAmount * 0.05;
-            let currentJackpot = parseFloat(localStorage.getItem("currentJackpot")) || 0;
-            let newJackpot = currentJackpot + jackpotContribution;
-            localStorage.setItem("currentJackpot", newJackpot.toString());
-            animateJackpot(currentJackpot, newJackpot);
-            
-            gameState = "playing"; openedTiles = 0; currentWin = 0; multiplierOffset = 0;
-            updateWinDisplay();
-
-            UIElements.grid.querySelectorAll(".tile").forEach(tile => {
-                tile.classList.remove("flipped");
-                let tileBack = tile.querySelector(".tile-back");
-                tileBack.innerHTML = "";
-                tileBack.className = "tile-back";
-            });
-
-            gridData = Array(TOTAL_TILES).fill("coin");
-            let minesPlaced = 0;
-            while (minesPlaced < minesCount) {
-                let pos = Math.floor(Math.random() * TOTAL_TILES);
-                if (gridData[pos] === "coin") { gridData[pos] = "bomb"; minesPlaced++; }
-            }
-            
-            setControlsState(true);
-            UIElements.actionButton.textContent = translations[currentLang].mines_cashout_btn;
-            UIElements.actionButton.disabled = true;
-            UIElements.actionButton.className = "w-full h-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-slate-600 transition-all text-white font-bold text-lg rounded-lg shadow-lg";
-            updateMultiplierBar();
-        }
-
-        function handleTileClick(index) {
-            if (gameState !== "playing") return;
-            const tileEl = UIElements.grid.children[index];
-            if (tileEl.classList.contains("flipped")) return;
-            
-            playSound("click");
-            tileEl.classList.add("flipped");
-            const tileType = gridData[index];
-            const tileBack = tileEl.querySelector(".tile-back");
-            
-            if (tileType === "bomb") {
-                playSound("bomb");
-                tileBack.innerHTML = '<span class="bomb-icon text-4xl">💣</span>';
-                tileBack.classList.add("bg-red-700");
-                endGame(false);
-            } else { // Coin
-                openedTiles++;
-                
-                if (openedTiles === bonusStepIndex) {
-                    playSound("bonus");
-                    tileBack.innerHTML = '<span class="treasure-icon text-4xl">🎁</span>';
-                    tileBack.classList.add("bg-purple-600");
-                    let bonusPrize = Math.round(betAmount * (Math.random() * minesCount + 1));
-                    balance += bonusPrize;
-                    showToast(`${translations[currentLang].toast_bonus_prize} +₹${bonusPrize.toFixed(2)}`, "success");
-                    updateBalanceDisplay();
-                } else {
-                    playSound("coin");
-                    tileBack.innerHTML = '<span class="coin-icon text-4xl">🪙</span>';
-                    tileBack.classList.add("bg-green-600");
-                }
-                
-                currentWin = betAmount * getMultiplierForStep(openedTiles);
-                multiplierOffset = 0;
-                updateWinDisplay();
-                updateActiveMultiplier();
-                UIElements.actionButton.disabled = false;
-                
-                if (openedTiles === TOTAL_TILES - minesCount) {
-                    endGame(true);
-                }
-            }
-        }
-
-        function getMultiplierForStep(step) {
-            if (step === 0) return 1.0;
-            let chance = 1.0;
-            const safeTiles = TOTAL_TILES - minesCount;
-            for (let i = 0; i < step; i++) {
-                if ((safeTiles - i) <= 0) break;
-                chance *= (TOTAL_TILES - i) / (safeTiles - i);
-            }
-            return Math.max(1.0, chance);
-        }
-
-        function cashout() {
-            if (gameState === "playing" && openedTiles > 0) {
-                playSound("cashout");
-                endGame(true);
-            }
-        }
-        
-        function endGame(isWin) {
-            gameState = isWin ? "won" : "lost";
-            if (isWin) {
-                balance += currentWin;
-                updateBalanceDisplay();
-                showWinPopup(currentWin);
-            } else {
-                currentWin = 0;
-                updateWinDisplay();
-                showToast(translations[currentLang].toast_hit_bomb);
-                revealAllBombs();
-                UIElements.grid.classList.add("shake-animation");
-                setTimeout(() => UIElements.grid.classList.remove("shake-animation"), 500);
-            }
-            setTimeout(createGrid, 2500);
-        }
-        
-        function revealAllBombs() {
-            gridData.forEach((type, index) => {
-                if (type === "bomb") {
-                    const tileEl = UIElements.grid.children[index];
-                    if (!tileEl.classList.contains("flipped")) {
-                        setTimeout(() => {
-                            tileEl.classList.add("flipped");
-                            let tileBack = tileEl.querySelector(".tile-back");
-                            tileBack.innerHTML = '<span class="bomb-icon text-4xl">💣</span>';
-                            tileBack.classList.add("bg-slate-700");
-                        }, 100 * index / 5);
-                    }
-                }
-            });
-        }
-        
-        function setControlsState(disabled) {
-            [UIElements.decreaseBet, UIElements.increaseBet, UIElements.decreaseMines, UIElements.increaseMines].forEach(btn => btn.disabled = disabled);
-        }
-
-        function setupEventListeners() {
-            UIElements.actionButton.addEventListener("click", () => {
-                if (gameState === 'betting') startGame();
-                else if (gameState === 'playing') cashout();
-            });
-            UIElements.decreaseBet.addEventListener("click", () => { if (gameState === 'betting' && betAmount > 10) { betAmount -= 10; updateBetDisplay(); playSound("click"); updateMultiplierBar(); } });
-            UIElements.increaseBet.addEventListener("click", () => { if (gameState === 'betting' && betAmount < 1000) { betAmount += 10; updateBetDisplay(); playSound("click"); updateMultiplierBar(); } });
-            UIElements.decreaseMines.addEventListener("click", () => { if (gameState === 'betting' && minesCount > 1) { minesCount--; updateMinesDisplay(); playSound("click"); updateMultiplierBar(); } });
-            UIElements.increaseMines.addEventListener("click", () => { if (gameState === 'betting' && minesCount < 24) { minesCount++; updateMinesDisplay(); playSound("click"); updateMultiplierBar(); } });
-            UIElements.addFundsBtn.addEventListener("click", () => { balance += 100; updateBalanceDisplay(); showToast("+₹100 added!", "success"); playSound("click"); });
-            UIElements.helpBtn.addEventListener("click", () => { UIElements.modal.classList.remove("opacity-0", "pointer-events-none"); UIElements.modal.querySelector(".modal-content").classList.remove("scale-95"); playSound("click"); });
-            UIElements.closeModalBtn.addEventListener("click", () => { UIElements.modal.classList.add("opacity-0", "pointer-events-none"); UIElements.modal.querySelector(".modal-content").classList.add("scale-95"); playSound("click"); });
-            UIElements.modal.addEventListener("click", (e) => { if (e.target === UIElements.modal) UIElements.closeModalBtn.click(); });
-            UIElements.scrollLeft.addEventListener("click", () => { if (multiplierOffset > 0) { multiplierOffset--; updateActiveMultiplier(); } });
-            UIElements.scrollRight.addEventListener("click", () => { if ((gameState === "betting" ? 0 : openedTiles) + multiplierOffset < TOTAL_TILES - minesCount - 6) { multiplierOffset++; updateActiveMultiplier(); } });
-        }
-        
-        initSounds(); setupEventListeners(); createGrid(); updateBalanceDisplay(); updateBetDisplay(); updateMinesDisplay(); setupJackpotTimer(); playBackgroundMusic();
-    }
-
-    function setLanguage(lang) {
-        localStorage.setItem("jackpothubLanguage", lang);
-        document.querySelectorAll("[data-translate-key]").forEach(el => {
-            const key = el.getAttribute("data-translate-key");
-            const text = translations[lang]?.[key] || translations.en[key];
-            el.innerHTML = text;
-        });
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
+        const translations = {
+            en: { mines_win: "WIN", mines_bet_label: "Bet", mines_mines_label: "Mines", mines_bet_btn: "Bet", mines_cashout_btn: "Cashout", mines_how_to_play_title: "How to Play?", mines_how_to_play_1: "1. Set Your Bet and Mines: Choose how much to bet and how many bombs to hide on the grid.", mines_how_to_play_2: "2. Find the Gems: Click on tiles to uncover them. Each gem you find increases your winnings.", mines_how_to_play_3: "3. Avoid the Bombs: If you uncover a bomb, the game ends and you lose your bet for that round.", mines_how_to_play_4: "4. Cash Out Anytime: You can cash out your current winnings after any successful gem find by clicking the 'Cashout' button.", mines_how_to_play_5: "5. Find a Treasure Chest: Uncover a special treasure tile for an instant bonus prize!", mines_got_it_btn: "Got It!", toast_not_enough_balance: "Not enough balance to bet!", toast_hit_bomb: "You hit a bomb!", toast_won: "You won", toast_bonus_prize: "Bonus Prize!" },
+            hi: { mines_win: "जीत", mines_bet_label: "शर्त", mines_mines_label: "माइन्स", mines_bet_btn: "शर्त लगाएं", mines_cashout_btn: "कैशआउट", mines_how_to_play_title: "कैसे खेलें?", mines_how_to_play_1: "1. अपनी शर्त और माइन्स सेट करें: यह चुनें कि ग्रिड पर कितनी शर्त लगानी है और कितने बम छिपाने हैं।", mines_how_to_play_2: "2. रत्न खोजें: टाइलों पर क्लिक करके उन्हें खोलें। आपके द्वारा खोजा गया प्रत्येक रत्न आपकी जीत को बढ़ाता है।", mines_how_to_play_3: "3. बम से बचें: यदि आप एक बम खोलते हैं, तो खेल समाप्त हो जाता है और आप उस दौर के लिए अपनी शर्त हार जाते हैं।", mines_how_to_play_4: "4. कभी भी कैश आउट करें: आप 'कैशआउट' बटन पर क्लिक करके किसी भी सफल रत्न खोज के बाद अपनी वर्तमान जीत को कैश आउट कर सकते हैं।", mines_how_to_play_5: "5. खजाना खोजें: तत्काल बोनस पुरस्कार के लिए एक विशेष खजाना टाइल खोलें!", mines_got_it_btn: "समझ गया!", toast_not_enough_balance: "शर्त लगाने के लिए पर्याप्त शेष राशि नहीं है!", toast_hit_bomb: "आप बम से टकरा गए!", toast_won: "आप जीत गए", toast_bonus_prize: "बोनस पुरस्कार!" }
+        };
+
+        const supabase = window.supabase;
+        let currentUser = null;
+        let jackpotTimerInterval = null;
+        let backgroundMusic = null;
+        const sounds = {};
+        
+        async function initializeMinesGame() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = user;
+
+            const UIElements = {
+                balance: document.getElementById("balance"),
+                coinsLeft: document.getElementById("coins-left"), bombsLeft: document.getElementById("bombs-left"),
+                grid: document.getElementById("game-grid"), decreaseBet: document.getElementById("decrease-bet"),
+                increaseBet: document.getElementById("increase-bet"), betAmount: document.getElementById("bet-amount"),
+                decreaseMines: document.getElementById("decrease-mines"), increaseMines: document.getElementById("increase-mines"),
+                minesCount: document.getElementById("mines-count"), actionButton: document.getElementById("action-button"),
+                winAmount: document.getElementById("win-amount"), jackpot: document.getElementById("jackpot"),
+                multiplierBar: document.getElementById("multiplier-bar"), 
+                toast: document.getElementById("toast"),
+                winPopup: document.getElementById("win-popup"), winPopupText: document.getElementById("win-popup-text"),
+                helpBtn: document.getElementById("help-btn"), modal: document.getElementById("how-to-play-modal"),
+                closeModalBtn: document.getElementById("close-modal-btn"), addFundsBtn: document.getElementById("add-funds-btn"),
+                scrollLeft: document.getElementById("scroll-left"), scrollRight: document.getElementById("scroll-right")
+            };
+            if (!UIElements.balance || !UIElements.grid) { console.error("Mines game UI elements not found!"); return; }
+
+            const TOTAL_TILES = 25;
+            
+            let { data: profile, error } = await supabase.from('profiles').select('balance').eq('id', currentUser.id).single();
+
+            if (error && error.code === 'PGRST116') {
+                console.log("Profile not found, creating one...");
+                const { data: newProfile, error: insertError } = await supabase.from('profiles').insert({ id: currentUser.id, balance: 1000.0 }).select().single();
+                if(insertError) {
+                     console.error("Error creating profile:", insertError);
+                     profile = { balance: 1000.0 };
+                } else {
+                    profile = newProfile;
+                }
+            } else if (error) {
+                console.error("Error fetching profile:", error);
+                profile = { balance: 1000.0 };
+            }
+            
+            let balance = profile.balance;
+            let betAmount = parseInt(localStorage.getItem("minesGameBetAmount")) || 10;
+            let minesCount = parseInt(localStorage.getItem("minesGameMinesCount")) || 3;
+            let gameState = "betting"; 
+            let gridData = [];
+            let openedTiles = 0;
+            let currentWin = 0;
+            let bonusStepIndex = -1;
+            let multiplierOffset = 0;
+            let currentLang = localStorage.getItem("jackpothubLanguage") || "en";
+            
+            const soundUrls = {
+                background: "https://cdn.pixabay.com/download/audio/2022/08/04/audio_2dde6b7562.mp3?filename=slot-machine-97365.mp3",
+                click: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_28b1b9728f.mp3?filename=mouse-click-153941.mp3",
+                coin: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c82f482f.mp3?filename=coin-collect-retro-8-bit-sound-effect-145251.mp3",
+                bomb: "https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c152a6.mp3?filename=explosion-6055.mp3",
+                bet: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_198a8f1a36.mp3?filename=cash-register-purchase-87343.mp3",
+                cashout: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_a874c46e23.mp3?filename=success-fanfare-trumpets-6185.mp3",
+                bonus: "https://cdn.pixabay.com/download/audio/2022/05/21/audio_a17c774191.mp3?filename=bonus-113259.mp3"
+            };
+            function initSounds() { Object.keys(soundUrls).forEach(key => { if (!sounds[key]) { sounds[key] = new Audio(soundUrls[key]); sounds[key].volume = key === 'background' ? 0.15 : 0.5; } }); backgroundMusic = sounds['background']; backgroundMusic.loop = true; }
+            function playSound(name) { try { if (sounds[name]) { sounds[name].currentTime = 0; sounds[name].play().catch(() => {}); } } catch (e) {} }
+            function playBackgroundMusic() { if (backgroundMusic && backgroundMusic.paused) { backgroundMusic.play().catch(() => {}); } }
+            
+            async function updateBalanceInSupabase(newBalance) {
+                balance = newBalance;
+                updateBalanceDisplay();
+                const { error } = await supabase.from('profiles').update({ balance: newBalance }).eq('id', currentUser.id);
+                if (error) { console.error("Failed to update balance in Supabase:", error); showToast("Error syncing balance!", "error"); }
+            }
+            
+            function animateJackpot(startValue, endValue) {
+                const duration = 1500; let startTime = null;
+                function step(currentTime) {
+                    if (!startTime) startTime = currentTime;
+                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                    const easeOutProgress = 1 - Math.pow(1 - progress, 3);
+                    const currentValue = startValue + (endValue - startValue) * easeOutProgress;
+                    UIElements.jackpot.textContent = `₹${currentValue.toFixed(2)}`;
+                    if (progress < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+            }
+
+            function setupJackpotTimer() {
+                if (jackpotTimerInterval) clearInterval(jackpotTimerInterval);
+                let resetTime = localStorage.getItem('jackpotResetTime');
+                let currentJackpot = parseFloat(localStorage.getItem('currentJackpot')) || 0;
+                if (!resetTime || Date.now() > resetTime) {
+                    currentJackpot = 0;
+                    resetTime = Date.now() + (15 * 60 * 1000);
+                    localStorage.setItem('jackpotResetTime', resetTime);
+                    localStorage.setItem('currentJackpot', '0');
+                }
+                UIElements.jackpot.textContent = `₹${currentJackpot.toFixed(2)}`;
+                jackpotTimerInterval = setInterval(() => {
+                    if (Date.now() > localStorage.getItem('jackpotResetTime')) {
+                        localStorage.setItem('currentJackpot', '0');
+                        UIElements.jackpot.textContent = '₹0.00';
+                        localStorage.setItem('jackpotResetTime', Date.now() + (15 * 60 * 1000));
+                    }
+                }, 1000);
+            }
+            
+            function updateBalanceDisplay() { UIElements.balance.textContent = `₹${balance.toFixed(2)}`; }
+            function updateBetDisplay() { UIElements.betAmount.textContent = betAmount; localStorage.setItem("minesGameBetAmount", betAmount.toString()); }
+            function updateMinesDisplay() { UIElements.minesCount.textContent = minesCount; UIElements.bombsLeft.textContent = minesCount; UIElements.coinsLeft.textContent = TOTAL_TILES - minesCount; localStorage.setItem("minesGameMinesCount", minesCount.toString()); }
+            function updateWinDisplay() { UIElements.winAmount.textContent = `₹${currentWin.toFixed(2)}`; }
+            
+            function showToast(message, type = "error") {
+                UIElements.toast.className = `fixed top-5 left-1/2 transform -translate-x-1/2 ${type === "error" ? "bg-red-500" : "bg-green-500"} text-white py-3 px-6 rounded-lg shadow-lg transition-all duration-500 z-50 text-lg font-bold text-center`;
+                UIElements.toast.textContent = message;
+                UIElements.toast.classList.add("opacity-100", "translate-y-0");
+                setTimeout(() => { UIElements.toast.classList.remove("opacity-100", "translate-y-0"); UIElements.toast.classList.add("opacity-0", "-translate-y-10"); }, 3000);
+            }
+            
+            function showWinPopup(amount) {
+                UIElements.winPopupText.textContent = `${translations[currentLang].toast_won} ₹${amount.toFixed(2)}!`;
+                UIElements.winPopup.classList.remove("opacity-0", "scale-0");
+                UIElements.winPopup.classList.add("opacity-100", "scale-100");
+                playSound("cashout");
+                setTimeout(() => { UIElements.winPopup.classList.remove("opacity-100", "scale-100"); UIElements.winPopup.classList.add("opacity-0", "scale-0"); }, 3000);
+            }
+
+            function updateMultiplierBar() {
+                UIElements.multiplierBar.innerHTML = "";
+                bonusStepIndex = Math.max(3, 10 - Math.floor(minesCount / 5));
+                for (let i = 0; i < 6; i++) {
+                    const el = document.createElement("div");
+                    el.className = 'flex-shrink-0 w-1/6 text-center bg-slate-700 py-1 rounded-md flex items-center justify-center';
+                    UIElements.multiplierBar.appendChild(el);
+                }
+                updateActiveMultiplier();
+            }
+
+            function updateActiveMultiplier() {
+                UIElements.multiplierBar.childNodes.forEach((el, index) => {
+                    el.classList.remove('active', 'bonus-step');
+                    el.innerHTML = '';
+                    const step = (gameState === "betting" ? 0 : openedTiles) + index + multiplierOffset;
+                    if (step > 0 && step <= TOTAL_TILES - minesCount) {
+                        if (step === bonusStepIndex) { el.innerHTML = '🎁'; el.classList.add('bonus-step'); } else { el.textContent = `${getMultiplierForStep(step).toFixed(2)}x`; }
+                    } else { el.textContent = '-'; }
+                    if (index === 0 && gameState === "playing") { el.classList.add('active'); }
+                });
+                UIElements.scrollLeft.disabled = multiplierOffset === 0;
+                UIElements.scrollRight.disabled = (gameState === "betting" ? 0 : openedTiles) + multiplierOffset >= TOTAL_TILES - minesCount - 6;
+            }
+            
+            function createGrid() {
+                UIElements.grid.innerHTML = "";
+                gameState = "betting";
+                gridData = []; openedTiles = 0; currentWin = 0; multiplierOffset = 0;
+                updateWinDisplay();
+                for (let i = 0; i < TOTAL_TILES; i++) {
+                    const tileEl = document.createElement("div");
+                    tileEl.className = "tile aspect-square";
+                    tileEl.innerHTML = '<div class="tile-inner"><div class="tile-front"></div><div class="tile-back"></div></div>';
+                    tileEl.addEventListener("click", () => handleTileClick(i));
+                    UIElements.grid.appendChild(tileEl);
+                }
+                setControlsState(false);
+                UIElements.actionButton.textContent = translations[currentLang].mines_bet_btn;
+                UIElements.actionButton.disabled = false;
+                UIElements.actionButton.className = "w-full h-full bg-green-600 hover:bg-green-700 disabled:bg-slate-600 transition-all duration-300 text-white font-bold text-lg rounded-lg shadow-lg";
+                updateMultiplierBar();
+            }
+
+            async function startGame() {
+                if (balance < betAmount) { return showToast(translations[currentLang].toast_not_enough_balance); }
+                playSound("bet");
+                await updateBalanceInSupabase(balance - betAmount);
+                let jackpotContribution = betAmount * 0.05;
+                let currentJackpot = parseFloat(localStorage.getItem("currentJackpot")) || 0;
+                let newJackpot = currentJackpot + jackpotContribution;
+                localStorage.setItem("currentJackpot", newJackpot.toString());
+                animateJackpot(currentJackpot, newJackpot);
+                gameState = "playing"; openedTiles = 0; currentWin = 0; multiplierOffset = 0;
+                updateWinDisplay();
+                UIElements.grid.querySelectorAll(".tile").forEach(tile => {
+                    tile.classList.remove("flipped");
+                    let tileBack = tile.querySelector(".tile-back");
+                    tileBack.innerHTML = "";
+                    tileBack.className = "tile-back";
+                });
+                gridData = Array(TOTAL_TILES).fill("coin");
+                let minesPlaced = 0;
+                while (minesPlaced < minesCount) {
+                    let pos = Math.floor(Math.random() * TOTAL_TILES);
+                    if (gridData[pos] === "coin") { gridData[pos] = "bomb"; minesPlaced++; }
+                }
+                setControlsState(true);
+                UIElements.actionButton.textContent = translations[currentLang].mines_cashout_btn;
+                UIElements.actionButton.disabled = true;
+                UIElements.actionButton.className = "w-full h-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-slate-600 transition-all text-white font-bold text-lg rounded-lg shadow-lg";
+                updateMultiplierBar();
+            }
+
+            async function handleTileClick(index) {
+                if (gameState !== "playing") return;
+                const tileEl = UIElements.grid.children[index];
+                if (tileEl.classList.contains("flipped")) return;
+                playSound("click");
+                tileEl.classList.add("flipped");
+                const tileType = gridData[index];
+                const tileBack = tileEl.querySelector(".tile-back");
+                if (tileType === "bomb") {
+                    playSound("bomb");
+                    tileBack.innerHTML = '<span class="bomb-icon text-4xl">💣</span>';
+                    tileBack.classList.add("bg-red-700");
+                    await endGame(false);
+                } else {
+                    openedTiles++;
+                    if (openedTiles === bonusStepIndex) {
+                        playSound("bonus");
+                        tileBack.innerHTML = '<span class="treasure-icon text-4xl">🎁</span>';
+                        tileBack.classList.add("bg-purple-600");
+                        let bonusPrize = Math.round(betAmount * (Math.random() * minesCount + 1));
+                        await updateBalanceInSupabase(balance + bonusPrize);
+                        showToast(`${translations[currentLang].toast_bonus_prize} +₹${bonusPrize.toFixed(2)}`, "success");
+                    } else {
+                        playSound("coin");
+                        tileBack.innerHTML = '<span class="coin-icon text-4xl">🪙</span>';
+                        tileBack.classList.add("bg-green-600");
+                    }
+                    currentWin = betAmount * getMultiplierForStep(openedTiles);
+                    multiplierOffset = 0;
+                    updateWinDisplay();
+                    updateActiveMultiplier();
+                    UIElements.actionButton.disabled = false;
+                    if (openedTiles === TOTAL_TILES - minesCount) { await endGame(true); }
+                }
+            }
+
+            function getMultiplierForStep(step) {
+                if (step === 0) return 1.0;
+                let chance = 1.0;
+                const safeTiles = TOTAL_TILES - minesCount;
+                for (let i = 0; i < step; i++) {
+                    if ((safeTiles - i) <= 0) break;
+                    chance *= (TOTAL_TILES - i) / (safeTiles - i);
+                }
+                return Math.max(1.0, chance);
+            }
+
+            async function cashout() {
+                if (gameState === "playing" && openedTiles > 0) {
+                    playSound("cashout");
+                    await endGame(true);
+                }
+            }
+            
+            async function endGame(isWin) {
+                gameState = isWin ? "won" : "lost";
+                if (isWin) {
+                    await updateBalanceInSupabase(balance + currentWin);
+                    showWinPopup(currentWin);
+                } else {
+                    currentWin = 0;
+                    updateWinDisplay();
+                    showToast(translations[currentLang].toast_hit_bomb);
+                    revealAllBombs();
+                    UIElements.grid.classList.add("shake-animation");
+                    setTimeout(() => UIElements.grid.classList.remove("shake-animation"), 500);
+                }
+                setTimeout(createGrid, 2500);
+            }
+            
+            function revealAllBombs() {
+                gridData.forEach((type, index) => {
+                    if (type === "bomb") {
+                        const tileEl = UIElements.grid.children[index];
+                        if (!tileEl.classList.contains("flipped")) {
+                            setTimeout(() => {
+                                tileEl.classList.add("flipped");
+                                let tileBack = tileEl.querySelector(".tile-back");
+                                tileBack.innerHTML = '<span class="bomb-icon text-4xl">💣</span>';
+                                tileBack.classList.add("bg-slate-700");
+                            }, 100 * index / 5);
+                        }
+                    }
+                });
+            }
+            
+            function setControlsState(disabled) {
+                [UIElements.decreaseBet, UIElements.increaseBet, UIElements.decreaseMines, UIElements.increaseMines].forEach(btn => btn.disabled = disabled);
+            }
+
+            function setupEventListeners() {
+                UIElements.actionButton.addEventListener("click", () => {
+                    if (gameState === 'betting') startGame(); else if (gameState === 'playing') cashout();
+                });
+                UIElements.decreaseBet.addEventListener("click", () => { if (gameState === 'betting' && betAmount > 10) { betAmount -= 10; updateBetDisplay(); playSound("click"); updateMultiplierBar(); } });
+                UIElements.increaseBet.addEventListener("click", () => { if (gameState === 'betting' && betAmount < 1000) { betAmount += 10; updateBetDisplay(); playSound("click"); updateMultiplierBar(); } });
+                UIElements.decreaseMines.addEventListener("click", () => { if (gameState === 'betting' && minesCount > 1) { minesCount--; updateMinesDisplay(); playSound("click"); updateMultiplierBar(); } });
+                UIElements.increaseMines.addEventListener("click", () => { if (gameState === 'betting' && minesCount < 24) { minesCount++; updateMinesDisplay(); playSound("click"); updateMultiplierBar(); } });
+                UIElements.addFundsBtn.addEventListener("click", async () => { await updateBalanceInSupabase(balance + 100); showToast("+₹100 added!", "success"); playSound("click"); });
+                UIElements.helpBtn.addEventListener("click", () => { UIElements.modal.classList.remove("opacity-0", "pointer-events-none"); UIElements.modal.querySelector(".modal-content").classList.remove("scale-95"); playSound("click"); });
+                UIElements.closeModalBtn.addEventListener("click", () => { UIElements.modal.classList.add("opacity-0", "pointer-events-none"); UIElements.modal.querySelector(".modal-content").classList.add("scale-95"); playSound("click"); });
+                UIElements.modal.addEventListener("click", (e) => { if (e.target === UIElements.modal) UIElements.closeModalBtn.click(); });
+                UIElements.scrollLeft.addEventListener("click", () => { if (multiplierOffset > 0) { multiplierOffset--; updateActiveMultiplier(); } });
+                UIElements.scrollRight.addEventListener("click", () => { if ((gameState === "betting" ? 0 : openedTiles) + multiplierOffset < TOTAL_TILES - minesCount - 6) { multiplierOffset++; updateActiveMultiplier(); } });
+            }
+            
+            initSounds();
+            setupEventListeners();
+            createGrid();
+            updateBalanceDisplay();
+            updateBetDisplay();
+            updateMinesDisplay();
+            setupJackpotTimer();
+            playBackgroundMusic();
+        }
+
+        function setLanguage(lang) {
+            localStorage.setItem("jackpothubLanguage", lang);
+            document.querySelectorAll("[data-translate-key]").forEach(el => {
+                const key = el.getAttribute("data-translate-key");
+                const text = translations[lang]?.[key] || translations.en[key];
+                el.innerHTML = text;
+            });
+        }
+
+        // Initialize everything
         setLanguage('en');
         initializeMinesGame();
     });

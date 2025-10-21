@@ -24,62 +24,18 @@
             padding-bottom: 100px;
         }
         
-        .form-container { 
-            max-width: 450px; 
-        }
-        
-        .input-field { 
-            transition: all 0.3s ease; 
-        }
-        
-        .input-field:focus { 
-            border-color: var(--secondary); 
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); 
-        }
-        
-        .error-message { 
-            color: var(--danger); 
-            font-weight: 500;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-        }
-        
-        .social-btn {
-            transition: all 0.3s ease;
-            border: 2px solid #e5e7eb;
-        }
-        
-        .social-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .floating-label {
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-        
+        .form-container { max-width: 450px; }
+        .input-field { transition: all 0.3s ease; }
+        .input-field:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        .error-message { color: var(--danger); font-weight: 500; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); transition: all 0.3s ease; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
+        .social-btn { transition: all 0.3s ease; border: 2px solid #e5e7eb; }
+        .social-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .floating-label { transition: all 0.3s ease; pointer-events: none; }
         .input-field:focus + .floating-label,
-        .input-field:not(:placeholder-shown) + .floating-label {
-            transform: translateY(-24px) scale(0.875);
-            color: var(--secondary);
-        }
-        
-        .password-strength {
-            height: 4px;
-            border-radius: 2px;
-            margin-top: 4px;
-            transition: all 0.3s ease;
-        }
-        
+        .input-field:not(:placeholder-shown) + .floating-label { transform: translateY(-24px) scale(0.875); color: var(--secondary); }
+        .password-strength { height: 4px; border-radius: 2px; margin-top: 4px; transition: all 0.3s ease; }
         .strength-weak { background-color: #ef4444; width: 25%; }
         .strength-fair { background-color: #f59e0b; width: 50%; }
         .strength-good { background-color: #3b82f6; width: 75%; }
@@ -87,23 +43,19 @@
     </style>
 </head>
 <body class="bg-slate-50">
-    <!-- Top Navigation -->
     <nav class="bg-white shadow-md py-4 px-6 sticky top-0 z-40">
         <div class="container mx-auto flex justify-between items-center">
             <a href="index.html" class="flex items-center space-x-2">
                 <i class="fas fa-bomb text-yellow-500 text-3xl"></i>
                 <span class="text-xl font-bold text-blue-800">Mines Jackpot</span>
             </a>
-            <!-- Dynamic Nav Container (for Desktop) -->
             <div id="nav-container"></div>
         </div>
     </nav>
     
-    <!-- Signup Form -->
     <div class="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="form-container w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
             <div class="p-8 sm:p-10">
-                <!-- Header -->
                 <div class="text-center mb-8">
                     <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-user-plus text-green-600 text-2xl"></i>
@@ -112,350 +64,132 @@
                     <p class="mt-2 text-gray-500">Create your account and start winning today!</p>
                 </div>
 
-                <!-- Signup Form -->
                 <form id="signup-form" class="space-y-6">
                     <div class="relative">
-                        <input type="text" id="name" name="name" required placeholder=" "
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field peer">
-                        <label for="name" class="floating-label absolute left-4 top-3 text-gray-500 bg-white px-1">
-                            <i class="fas fa-user mr-2"></i>Full Name
-                        </label>
+                        <input type="text" id="name" name="name" required placeholder=" " class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field peer">
+                        <label for="name" class="floating-label absolute left-4 top-3 text-gray-500 bg-white px-1"><i class="fas fa-user mr-2"></i>Full Name</label>
                     </div>
-
                     <div class="relative">
-                        <input type="email" id="email" name="email" required placeholder=" "
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field peer">
-                        <label for="email" class="floating-label absolute left-4 top-3 text-gray-500 bg-white px-1">
-                            <i class="fas fa-envelope mr-2"></i>Email Address
-                        </label>
+                        <input type="email" id="email" name="email" required placeholder=" " class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field peer">
+                        <label for="email" class="floating-label absolute left-4 top-3 text-gray-500 bg-white px-1"><i class="fas fa-envelope mr-2"></i>Email Address</label>
                     </div>
-
                     <div class="relative">
-                        <input type="password" id="password" name="password" required placeholder=" "
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field peer">
-                        <label for="password" class="floating-label absolute left-4 top-3 text-gray-500 bg-white px-1">
-                            <i class="fas fa-lock mr-2"></i>Password
-                        </label>
+                        <input type="password" id="password" name="password" required placeholder=" " class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field peer">
+                        <label for="password" class="floating-label absolute left-4 top-3 text-gray-500 bg-white px-1"><i class="fas fa-lock mr-2"></i>Password</label>
                         <div id="password-strength" class="password-strength"></div>
                     </div>
-
                     <div class="relative">
-                        <input type="password" id="confirm-password" name="confirm-password" required placeholder=" "
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field peer">
-                        <label for="confirm-password" class="floating-label absolute left-4 top-3 text-gray-500 bg-white px-1">
-                            <i class="fas fa-lock mr-2"></i>Confirm Password
-                        </label>
+                        <input type="password" id="confirm-password" name="confirm-password" required placeholder=" " class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-field peer">
+                        <label for="confirm-password" class="floating-label absolute left-4 top-3 text-gray-500 bg-white px-1"><i class="fas fa-lock mr-2"></i>Confirm Password</label>
                     </div>
-
-                    <!-- Terms and Conditions -->
                     <div class="flex items-start">
-                        <input type="checkbox" id="terms" name="terms" required
-                               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 mt-1">
-                        <label for="terms" class="ml-2 text-sm text-gray-600">
-                            I agree to the <a href="#" class="text-blue-600 hover:text-blue-800 font-semibold">Terms of Service</a> 
-                            and <a href="#" class="text-blue-600 hover:text-blue-800 font-semibold">Privacy Policy</a>
-                        </label>
+                        <input type="checkbox" id="terms" name="terms" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 mt-1">
+                        <label for="terms" class="ml-2 text-sm text-gray-600">I agree to the <a href="#" class="text-blue-600 hover:text-blue-800 font-semibold">Terms of Service</a> and <a href="#" class="text-blue-600 hover:text-blue-800 font-semibold">Privacy Policy</a></label>
                     </div>
-
-                    <!-- Promotional Emails -->
-                    <div class="flex items-start">
-                        <input type="checkbox" id="promotional" name="promotional"
-                               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 mt-1">
-                        <label for="promotional" class="ml-2 text-sm text-gray-600">
-                            Send me promotional emails about bonuses and new games
-                        </label>
-                    </div>
-
-                    <!-- Error Message -->
                     <div id="error-message" class="error-message text-center pt-2"></div>
-
-                    <!-- Sign Up Button -->
-                    <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold text-lg">
-                        <i class="fas fa-user-plus mr-2"></i>Create Account
-                    </button>
+                    <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold text-lg"><i class="fas fa-user-plus mr-2"></i>Create Account</button>
                 </form>
 
-                <!-- Divider -->
-                <div class="relative my-6">
-                    <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                        <div class="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-white text-gray-500">Or sign up with</span>
-                    </div>
-                </div>
-
-                <!-- Social Sign Up -->
+                <div class="relative my-6"><div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-300"></div></div><div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-gray-500">Or sign up with</span></div></div>
                 <div class="space-y-3">
-                    <button id="google-signup-btn" class="w-full social-btn bg-white py-3 rounded-lg font-semibold flex items-center justify-center">
-                        <i class="fab fa-google text-red-500 text-lg mr-3"></i>
-                        Sign up with Google
-                    </button>
-                    
-                    <button id="facebook-signup-btn" class="w-full social-btn bg-white py-3 rounded-lg font-semibold flex items-center justify-center">
-                        <i class="fab fa-facebook text-blue-600 text-lg mr-3"></i>
-                        Sign up with Facebook
-                    </button>
+                    <button id="google-signup-btn" class="w-full social-btn bg-white py-3 rounded-lg font-semibold flex items-center justify-center"><i class="fab fa-google text-red-500 text-lg mr-3"></i>Sign up with Google</button>
+                    <button id="facebook-signup-btn" class="w-full social-btn bg-white py-3 rounded-lg font-semibold flex items-center justify-center"><i class="fab fa-facebook text-blue-600 text-lg mr-3"></i>Sign up with Facebook</button>
                 </div>
-
-                <!-- Login Link -->
-                <div class="mt-6 text-center">
-                    <p class="text-gray-600">Already have an account? 
-                        <a href="login.html" class="text-blue-600 hover:text-blue-800 font-semibold">Log in here</a>
-                    </p>
-                </div>
-
-                <!-- Welcome Bonus Notice -->
-                <div class="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <div class="flex items-start">
-                        <i class="fas fa-gift text-yellow-600 mt-1 mr-3"></i>
-                        <div>
-                            <h4 class="font-semibold text-yellow-800 text-sm">Welcome Bonus!</h4>
-                            <p class="text-yellow-700 text-xs mt-1">
-                                Get ₹500 free bonus when you verify your email and make your first deposit!
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                <div class="mt-6 text-center"><p class="text-gray-600">Already have an account? <a href="login.html" class="text-blue-600 hover:text-blue-800 font-semibold">Log in here</a></p></div>
+                <div class="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200"><div class="flex items-start"><i class="fas fa-gift text-yellow-600 mt-1 mr-3"></i><div><h4 class="font-semibold text-yellow-800 text-sm">Welcome Bonus!</h4><p class="text-yellow-700 text-xs mt-1">Get ₹500 free bonus when you verify your email and make your first deposit!</p></div></div></div>
             </div>
         </div>
     </div>
-
-    <!-- Mobile Bottom Navigation Container -->
     <div id="bottom-nav-container" class="md:hidden"></div>
 
-    <!-- Firebase and Auth Logic -->
-    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <!-- Supabase and Auth Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
     <script src="auth.js"></script>
     <script>
-        // DOM Elements
         const signupForm = document.getElementById('signup-form');
         const googleSignUpBtn = document.getElementById('google-signup-btn');
         const facebookSignUpBtn = document.getElementById('facebook-signup-btn');
         const errorMessageDiv = document.getElementById('error-message');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
         const passwordStrengthDiv = document.getElementById('password-strength');
 
-        // Password strength checker
         function checkPasswordStrength(password) {
             let strength = 0;
-            
-            // Length check
-            if (password.length >= 8) strength += 1;
-            
-            // Lowercase check
-            if (password.match(/[a-z]/)) strength += 1;
-            
-            // Uppercase check
-            if (password.match(/[A-Z]/)) strength += 1;
-            
-            // Number check
-            if (password.match(/[0-9]/)) strength += 1;
-            
-            // Special character check
-            if (password.match(/[^a-zA-Z0-9]/)) strength += 1;
-            
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
             return strength;
         }
 
-        // Update password strength indicator
-        document.getElementById('password').addEventListener('input', function() {
-            const password = this.value;
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
             const strength = checkPasswordStrength(password);
-            const confirmPassword = document.getElementById('confirm-password');
-            
-            // Update strength indicator
             passwordStrengthDiv.className = 'password-strength';
             if (password.length > 0) {
-                if (strength <= 2) {
-                    passwordStrengthDiv.classList.add('strength-weak');
-                } else if (strength === 3) {
-                    passwordStrengthDiv.classList.add('strength-fair');
-                } else if (strength === 4) {
-                    passwordStrengthDiv.classList.add('strength-good');
-                } else {
-                    passwordStrengthDiv.classList.add('strength-strong');
-                }
-            }
-            
-            // Real-time password match check
-            if (confirmPassword.value && password !== confirmPassword.value) {
-                confirmPassword.classList.add('border-red-500');
-            } else {
-                confirmPassword.classList.remove('border-red-500');
+                if (strength <= 2) passwordStrengthDiv.classList.add('strength-weak');
+                else if (strength === 3) passwordStrengthDiv.classList.add('strength-fair');
+                else if (strength === 4) passwordStrengthDiv.classList.add('strength-good');
+                else passwordStrengthDiv.classList.add('strength-strong');
             }
         });
 
-        // Confirm password validation
-        document.getElementById('confirm-password').addEventListener('input', function() {
-            const password = document.getElementById('password').value;
-            if (this.value && password !== this.value) {
-                this.classList.add('border-red-500');
-            } else {
-                this.classList.remove('border-red-500');
-            }
-        });
-
-        // Show loading state
         function setLoadingState(button, isLoading) {
             if (isLoading) {
                 button.disabled = true;
-                const originalText = button.innerHTML;
+                button.dataset.originalText = button.innerHTML;
                 button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating account...';
-                button.setAttribute('data-original-text', originalText);
             } else {
                 button.disabled = false;
-                const originalText = button.getAttribute('data-original-text');
-                if (originalText) {
-                    button.innerHTML = originalText;
-                }
+                button.innerHTML = button.dataset.originalText;
             }
         }
 
-        // Show success message
-        function showSuccessMessage() {
-            const successDiv = document.createElement('div');
-            successDiv.className = 'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg bg-green-100 text-green-800 font-semibold';
-            successDiv.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Account created successfully!';
-            document.body.appendChild(successDiv);
-            
-            setTimeout(() => {
-                document.body.removeChild(successDiv);
-            }, 3000);
-        }
-
-        // Email/Password Sign Up
-        signupForm.addEventListener('submit', (e) => {
+        signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            errorMessageDiv.textContent = '';
             const name = signupForm.name.value;
             const email = signupForm.email.value;
-            const password = signupForm.password.value;
-            const confirmPassword = signupForm['confirm-password'].value;
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
             const termsAccepted = signupForm.terms.checked;
-            const submitButton = signupForm.querySelector('button[type="submit"]');
             
-            errorMessageDiv.textContent = '';
+            if (!termsAccepted) { errorMessageDiv.textContent = 'Please accept the Terms of Service and Privacy Policy.'; return; }
+            if (password !== confirmPassword) { errorMessageDiv.textContent = 'Passwords do not match.'; return; }
+            if (password.length < 6) { errorMessageDiv.textContent = 'Password must be at least 6 characters long.'; return; }
 
-            // Validation
-            if (!termsAccepted) {
-                errorMessageDiv.textContent = 'Please accept the Terms of Service and Privacy Policy.';
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                errorMessageDiv.textContent = 'Passwords do not match.';
-                return;
-            }
-
-            if (password.length < 6) {
-                errorMessageDiv.textContent = 'Password must be at least 6 characters long.';
-                return;
-            }
-
+            const submitButton = signupForm.querySelector('button[type="submit"]');
             setLoadingState(submitButton, true);
 
-            auth.createUserWithEmailAndPassword(email, password)
-                .then(userCredential => {
-                    const user = userCredential.user;
-                    return user.updateProfile({
-                        displayName: name
-                    }).then(() => {
-                        // Send email verification
-                        return user.sendEmailVerification();
-                    }).then(() => {
-                        showSuccessMessage();
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 2000);
-                    });
-                })
-                .catch(error => {
-                    setLoadingState(submitButton, false);
-                    
-                    let errorMessage = 'An unexpected error occurred. Please try again.';
-                    if (error.code === 'auth/email-already-in-use') {
-                        errorMessage = 'This email address is already in use.';
-                    } else if (error.code === 'auth/weak-password') {
-                        errorMessage = 'Password is too weak. Please choose a stronger password.';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = 'Please enter a valid email address.';
-                    }
-                    
-                    errorMessageDiv.textContent = errorMessage;
-                    console.error('Sign-up error:', error.message);
-                });
-        });
-
-        // Google Sign Up
-        googleSignUpBtn.addEventListener('click', () => {
-            const googleProvider = new firebase.auth.GoogleAuthProvider();
-            errorMessageDiv.textContent = '';
-            setLoadingState(googleSignUpBtn, true);
-            
-            auth.signInWithPopup(googleProvider)
-                .then(result => {
-                    showSuccessMessage();
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                }).catch(error => {
-                    setLoadingState(googleSignUpBtn, false);
-                    errorMessageDiv.textContent = 'Failed to sign up with Google. Please try again.';
-                    console.error('Google Sign-up error:', error.message);
-                });
-        });
-
-        // Facebook Sign Up
-        facebookSignUpBtn.addEventListener('click', () => {
-            const facebookProvider = new firebase.auth.FacebookAuthProvider();
-            errorMessageDiv.textContent = '';
-            setLoadingState(facebookSignUpBtn, true);
-            
-            auth.signInWithPopup(facebookProvider)
-                .then(result => {
-                    showSuccessMessage();
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                }).catch(error => {
-                    setLoadingState(facebookSignUpBtn, false);
-                    errorMessageDiv.textContent = 'Failed to sign up with Facebook. Please try again.';
-                    console.error('Facebook Sign-up error:', error.message);
-                });
-        });
-
-        // Enhanced input interactions
-        document.querySelectorAll('.input-field').forEach(input => {
-            // Add focus effects
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('ring-2', 'ring-blue-500', 'ring-opacity-50');
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.classList.remove('ring-2', 'ring-blue-500', 'ring-opacity-50');
-            });
-            
-            // Real-time validation
-            input.addEventListener('input', function() {
-                if (this.type === 'email') {
-                    const isValid = this.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-                    if (this.value && !isValid) {
-                        this.classList.add('border-red-500');
-                    } else {
-                        this.classList.remove('border-red-500');
-                    }
+            const { data, error } = await window.supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: { full_name: name }
                 }
             });
-        });
 
-        // Terms and Privacy links
-        document.querySelectorAll('a[href="#"]').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const isTerms = this.textContent.includes('Terms');
-                alert(`${isTerms ? 'Terms of Service' : 'Privacy Policy'} documentation will be displayed here.`);
-            });
+            setLoadingState(submitButton, false);
+
+            if (error) {
+                errorMessageDiv.textContent = error.message;
+            } else if (data.user) {
+                alert('Account created! Please check your email to verify your account before logging in.');
+                signupForm.reset();
+                window.location.href = 'login.html';
+            }
         });
+        
+        async function handleOAuthSignUp(provider) {
+            const { error } = await window.supabase.auth.signInWithOAuth({ provider: provider });
+            if (error) { errorMessageDiv.textContent = `Failed to sign up with ${provider}. Please try again.`; }
+        }
+
+        googleSignUpBtn.addEventListener('click', () => handleOAuthSignUp('google'));
+        facebookSignUpBtn.addEventListener('click', () => handleOAuthSignUp('facebook'));
     </script>
 </body>
 </html>
